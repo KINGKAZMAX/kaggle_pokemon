@@ -9,8 +9,9 @@ Scope:
 The loop spends spare compute on the current blockers:
   1. expand schema-v2 Iono data,
   2. train option-outcome Q and prior candidates,
-  3. run smoke gates for safe rule candidates,
-  4. write an always-readable dashboard.
+  3. run Iono smoke gates plus Crustle guard gates for safe rule candidates,
+  4. rank candidates by ship-floor safety,
+  5. write an always-readable dashboard.
 """
 from __future__ import annotations
 
@@ -59,12 +60,48 @@ def run(cmd: list[str], *, env: dict[str, str] | None = None, timeout: int = 144
 
 def parse_wr(out: str) -> dict[str, float]:
     vals: dict[str, float] = {}
-    for m in re.finditer(r"^(\S+)\s+\([^)]*\)\s+([0-9]+(?:\.[0-9]+)?)\s*%", out, re.M):
+    for m in re.finditer(r"^\s*(\S+)\s+\([^)]*\)\s+([0-9]+(?:\.[0-9]+)?)\s*%", out, re.M):
         vals[m.group(1)] = float(m.group(2))
-    m = re.search(r"OVERALL \(gated\)\s+([0-9]+(?:\.[0-9]+)?)\s*%", out)
+    m = re.search(r"^\s*OVERALL \(gated\)\s+([0-9]+(?:\.[0-9]+)?)\s*%", out, re.M)
     if m:
         vals["OVERALL"] = float(m.group(1))
     return vals
+
+
+def ranked_candidates(gates: list[dict[str, Any]]) -> list[dict[str, Any]]:
+    by_name: dict[str, dict[str, Any]] = {}
+    for gate in gates:
+        name = str(gate.get("name") or "unknown")
+        entry = by_name.setdefault(name, {"name": name, "iono": None, "crustle_min": None, "overall": None, "rc_ok": True})
+        wrs = gate.get("wrs") or {}
+        entry["rc_ok"] = bool(entry["rc_ok"] and gate.get("rc") == 0)
+        if gate.get("kind") == "iono":
+            entry["iono"] = wrs.get("real_iono") or wrs.get("OVERALL")
+        elif gate.get("kind") == "crustle":
+            flg = wrs.get("meta_crustle_flg")
+            majkel = wrs.get("meta_crustle_majkel")
+            if flg is not None and majkel is not None:
+                entry["crustle_min"] = min(float(flg), float(majkel))
+            entry["crustle_flg"] = flg
+            entry["crustle_majkel"] = majkel
+            entry["overall"] = wrs.get("OVERALL")
+
+    ranked: list[dict[str, Any]] = []
+    for entry in by_name.values():
+        iono = entry.get("iono")
+        crustle_min = entry.get("crustle_min")
+        safety = -999.0
+        if iono is not None and crustle_min is not None:
+            # Hard floors remain in director_gate.py. This score is only a smoke-rank:
+            # prioritize the weaker required matchup, then reward Iono headroom.
+            safety = min(float(iono) - 55.0, float(crustle_min) - 89.0) + 0.01 * float(iono)
+        entry["smoke_rank_score"] = round(safety, 4)
+        entry["smoke_green"] = bool(entry.get("rc_ok") and iono is not None and crustle_min is not None and iono >= 55.0 and crustle_min >= 89.0)
+        ranked.append(entry)
+    ranked.sort(key=lambda x: (bool(x.get("smoke_green")), float(x.get("smoke_rank_score") or -999.0)), reverse=True)
+    for i, entry in enumerate(ranked, 1):
+        entry["rank"] = i
+    return ranked
 
 
 def latest_json(pattern: str) -> dict[str, Any] | None:
@@ -113,6 +150,7 @@ def write_dashboard(payload: dict[str, Any]) -> None:
     q = payload.get("latest_q") or {}
     prior = payload.get("latest_prior") or {}
     gates = payload.get("smoke_gates") or []
+    ranking = payload.get("candidate_ranking") or []
     lines = [
         "# Anti-meta autopilot",
         "",
@@ -134,14 +172,30 @@ def write_dashboard(payload: dict[str, Any]) -> None:
         f"- Option-Q: `{q.get('_path')}` best_bce={q.get('best_val_bce')} acc={q.get('best_val_acc')}",
         f"- Prior/BC: `{prior.get('_path')}` win_multi_top1={q.get('best_val_win_multi_top1') or prior.get('best_val_win_multi_top1')}",
         "",
-        "## Smoke gates",
+        "## Candidate ranking",
         "",
-        "| candidate | rc | real_iono | overall |",
-        "|---|---:|---:|---:|",
+        "| rank | candidate | smoke green | iono | crustle min | flg | majkel | score |",
+        "|---:|---|---:|---:|---:|---:|---:|---:|",
+    ]
+    for row in ranking:
+        lines.append(
+            f"| {row.get('rank')} | {row.get('name')} | {row.get('smoke_green')} | "
+            f"{row.get('iono')} | {row.get('crustle_min')} | {row.get('crustle_flg')} | "
+            f"{row.get('crustle_majkel')} | {row.get('smoke_rank_score')} |"
+        )
+    lines += [
+        "",
+        "## Raw smoke gates",
+        "",
+        "| candidate | kind | rc | real_iono | flg | majkel | overall |",
+        "|---|---|---:|---:|---:|---:|---:|",
     ]
     for g in gates:
         wr = g.get("wrs") or {}
-        lines.append(f"| {g.get('name')} | {g.get('rc')} | {wr.get('real_iono')} | {wr.get('OVERALL')} |")
+        lines.append(
+            f"| {g.get('name')} | {g.get('kind')} | {g.get('rc')} | {wr.get('real_iono')} | "
+            f"{wr.get('meta_crustle_flg')} | {wr.get('meta_crustle_majkel')} | {wr.get('OVERALL')} |"
+        )
     lines += [
         "",
         "Autopilot is local-only. It never submits to Kaggle.",
@@ -150,13 +204,14 @@ def write_dashboard(payload: dict[str, Any]) -> None:
     (REPORT / "ANTI_META_AUTOPILOT.md").write_text("\n".join(lines), encoding="utf-8")
 
 
-def gate_candidate(name: str, env: dict[str, str], games: int) -> dict[str, Any]:
+def gate_candidate(name: str, env: dict[str, str], games: int, opponents: list[str], kind: str) -> dict[str, Any]:
     step = run(
-        [PY, "-u", "scripts/gate_archaludon.py", "--games", str(games), "--opponents", "real_iono"],
+        [PY, "-u", "scripts/gate_archaludon.py", "--games", str(games), "--opponents", *opponents],
         env=env,
         timeout=7200,
     )
     step["name"] = name
+    step["kind"] = kind
     step["wrs"] = parse_wr(step["tail"])
     return step
 
@@ -211,18 +266,23 @@ def one_cycle(args: argparse.Namespace, cycle: int) -> dict[str, Any]:
             "--fragile-win-weight", "1.5",
         ], timeout=14400))
 
-    gates = [
-        gate_candidate("tomato", {"ARCH_IONO_LEVER": "tomato"}, args.gate_games),
-        gate_candidate("tomato_fork_floor2", {
+    candidates = [
+        ("tomato", {"ARCH_IONO_LEVER": "tomato"}),
+        ("tomato_fork_floor2", {
             "ARCH_IONO_LEVER": "tomato_fork",
             "ARCH_IONO_FORK_FLOOR": "2",
-        }, args.gate_games),
-        gate_candidate("tomato_fork_floor3", {
+        }),
+        ("tomato_fork_floor3", {
             "ARCH_IONO_LEVER": "tomato_fork",
             "ARCH_IONO_FORK_FLOOR": "3",
-        }, args.gate_games),
+        }),
     ]
+    gates: list[dict[str, Any]] = []
+    for name, env in candidates:
+        gates.append(gate_candidate(name, env, args.gate_games, ["real_iono"], "iono"))
+        gates.append(gate_candidate(name, env, args.crustle_gate_games, ["meta_crustle_flg", "meta_crustle_majkel"], "crustle"))
     payload["smoke_gates"] = gates
+    payload["candidate_ranking"] = ranked_candidates(gates)
     payload["latest_q"] = latest_json("artifacts/iono_q_v2/iono_option_q_*.json")
     payload["latest_prior"] = latest_json("artifacts/iono_prior_v2/iono_prior_*.json")
     write_dashboard(payload)
@@ -234,6 +294,7 @@ def main() -> int:
     ap.add_argument("--data", default="episodes/iono_bc_v2")
     ap.add_argument("--collect-games", type=int, default=1200)
     ap.add_argument("--gate-games", type=int, default=80)
+    ap.add_argument("--crustle-gate-games", type=int, default=60)
     ap.add_argument("--device", default="auto", choices=("auto", "cuda", "cpu"))
     ap.add_argument("--batch-size", type=int, default=8192)
     ap.add_argument("--q-epochs", type=int, default=40)

@@ -12,3 +12,15 @@
 {"ts": "2026-07-31T01:30:01+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 50.3125, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
 {"ts": "2026-07-31T01:30:17+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 50.3125, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
 {"ts": "2026-07-31T01:31:33+00:00", "kind": "iono_instant_noise", "instant": 27.5, "pool_mean": 45.9375, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T01:35:00+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 51.5625, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T01:40:01+00:00", "kind": "crustle_instant_noise", "instant": 73.3, "pool_mean": 83.65, "action": "HOLD; reconfirm next cycles"}
+{"ts": "2026-07-31T01:44:36+00:00", "kind": "iono_instant_noise", "instant": 40.0, "pool_mean": 54.6875, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T01:47:43+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 56.5625, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T01:48:06+00:00", "kind": "crustle_instant_noise", "instant": 72.5, "pool_mean": 82.7125, "action": "HOLD; reconfirm next cycles"}
+{"ts": "2026-07-31T01:48:27+00:00", "kind": "crustle_instant_noise", "instant": 72.5, "pool_mean": 82.7125, "action": "HOLD; reconfirm next cycles"}
+{"ts": "2026-07-31T01:50:53+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 52.5, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T01:52:10+00:00", "kind": "crustle_refuel_reject", "lever": "ARCH_CRUSTLE_LEVER=refuel", "base": {"games_per_opp": 120, "flg": 91.7, "majkel": 88.3, "overall": 90.0}, "candidate": {"games_per_opp": 120, "flg": 85.8, "majkel": 84.2, "overall": 85.0}, "action": "ROLLBACK refuel TO_HAND Cinderace; do not submit"}
+{"ts": "2026-07-31T01:57:05+00:00", "kind": "iono_instant_noise", "instant": 40.0, "pool_mean": 55.3125, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T01:59:00+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 51.5625, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T01:59:46+00:00", "kind": "iono_instant_noise", "instant": 30.0, "pool_mean": 45.625, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T02:00:57+00:00", "kind": "crustle_instant_noise", "instant": 72.5, "pool_mean": 86.05, "action": "HOLD; reconfirm next cycles"}
