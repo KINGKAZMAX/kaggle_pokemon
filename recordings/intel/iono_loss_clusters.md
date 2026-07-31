@@ -1,20 +1,20 @@
 # Iono loss clusters — schema v2
 
-Pooled **15380 games**: 7866 wins / 7514 losses (**51.14%**). Each row compares the last non-setup hero decision in losses against wins.
+Pooled **23780 games**: 12153 wins / 11627 losses (**51.11%**). Each row compares the last non-setup hero decision in losses against wins.
 
 | cluster | losses | loss share (95% CI) | wins | win share (95% CI) | delta |
 |---|---:|---:|---:|---:|---:|
-| `fragile_board_any` | 3359 | 44.70% [43.58, 45.83] | 452 | 5.75% [5.25, 6.28] | +38.96pp |
-| `setup_incomplete_active` | 2204 | 29.33% [28.31, 30.37] | 269 | 3.42% [3.04, 3.84] | +25.91pp |
-| `active_energy_lt2` | 1976 | 26.30% [25.31, 27.30] | 170 | 2.16% [1.86, 2.51] | +24.14pp |
-| `bench_empty` | 2152 | 28.64% [27.63, 29.67] | 101 | 1.28% [1.06, 1.56] | +27.36pp |
-| `opponent_prizes_le2` | 6394 | 85.09% [84.27, 85.88] | 3243 | 41.23% [40.14, 42.32] | +43.87pp |
-| `hero_prizes_ge4` | 3455 | 45.98% [44.86, 47.11] | 494 | 6.28% [5.77, 6.84] | +39.70pp |
-| `prize_deficit_ge2` | 3897 | 51.86% [50.73, 52.99] | 115 | 1.46% [1.22, 1.75] | +50.40pp |
-| `hand_le2` | 1291 | 17.18% [16.35, 18.05] | 788 | 10.02% [9.37, 10.70] | +7.16pp |
-| `deck_le5` | 171 | 2.28% [1.96, 2.64] | 625 | 7.95% [7.37, 8.56] | -5.67pp |
-| `turn_ge12` | 4560 | 60.69% [59.58, 61.79] | 7154 | 90.95% [90.29, 91.56] | -30.26pp |
-| `iono_threat_active` | 136 | 1.81% [1.53, 2.14] | 101 | 1.28% [1.06, 1.56] | +0.53pp |
+| `fragile_board_any` | 5253 | 45.18% [44.28, 46.09] | 701 | 5.77% [5.37, 6.20] | +39.41pp |
+| `setup_incomplete_active` | 3419 | 29.41% [28.58, 30.24] | 420 | 3.46% [3.15, 3.80] | +25.95pp |
+| `active_energy_lt2` | 3052 | 26.25% [25.46, 27.06] | 257 | 2.11% [1.87, 2.39] | +24.13pp |
+| `bench_empty` | 3369 | 28.98% [28.16, 29.81] | 148 | 1.22% [1.04, 1.43] | +27.76pp |
+| `opponent_prizes_le2` | 9850 | 84.72% [84.05, 85.36] | 4984 | 41.01% [40.14, 41.89] | +43.71pp |
+| `hero_prizes_ge4` | 5370 | 46.19% [45.28, 47.09] | 767 | 6.31% [5.89, 6.76] | +39.87pp |
+| `prize_deficit_ge2` | 6034 | 51.90% [50.99, 52.80] | 168 | 1.38% [1.19, 1.61] | +50.51pp |
+| `hand_le2` | 2017 | 17.35% [16.67, 18.05] | 1223 | 10.06% [9.54, 10.61] | +7.28pp |
+| `deck_le5` | 256 | 2.20% [1.95, 2.48] | 937 | 7.71% [7.25, 8.20] | -5.51pp |
+| `turn_ge12` | 7007 | 60.26% [59.37, 61.15] | 11063 | 91.03% [90.51, 91.53] | -30.77pp |
+| `iono_threat_active` | 223 | 1.92% [1.68, 2.18] | 151 | 1.24% [1.06, 1.46] | +0.68pp |
 
 ## Readout
 
@@ -41,5 +41,12 @@ This does **not** identify a safe policy change by itself. A follow-up lever mus
 | `iono_decisions_real_iono_tomato_s0_20260731T015008Z.jsonl` | 1200 | 621-579 | 51.75% | 0 |
 | `iono_decisions_real_iono_tomato_s0_20260731T015426Z.jsonl` | 1200 | 605-595 | 50.42% | 0 |
 | `iono_decisions_real_iono_tomato_s0_20260731T015837Z.jsonl` | 1200 | 614-586 | 51.17% | 0 |
+| `iono_decisions_real_iono_tomato_s0_20260731T020253Z.jsonl` | 1200 | 621-579 | 51.75% | 0 |
+| `iono_decisions_real_iono_tomato_s0_20260731T020703Z.jsonl` | 1200 | 607-593 | 50.58% | 0 |
+| `iono_decisions_real_iono_tomato_s0_20260731T021115Z.jsonl` | 1200 | 606-594 | 50.50% | 0 |
+| `iono_decisions_real_iono_tomato_s0_20260731T021529Z.jsonl` | 1200 | 607-593 | 50.58% | 0 |
+| `iono_decisions_real_iono_tomato_s0_20260731T021944Z.jsonl` | 1200 | 647-553 | 53.92% | 0 |
+| `iono_decisions_real_iono_tomato_s0_20260731T022403Z.jsonl` | 1200 | 620-580 | 51.67% | 0 |
+| `iono_decisions_real_iono_tomato_s0_20260731T022824Z.jsonl` | 1200 | 579-621 | 48.25% | 0 |
 | `iono_decisions_real_iono_tomato_s20_20260731T002801Z.jsonl` | 400 | 185-215 | 46.25% | 0 |
 | `iono_decisions_real_iono_tomato_s21_20260731T002801Z.jsonl` | 400 | 219-181 | 54.75% | 0 |

@@ -1,10 +1,10 @@
 {
-  "ts": "2026-07-31T02:03:45.545575+00:00",
-  "cycle": 100,
-  "iono_wr": 67.5,
-  "majkel_wr": 90.0,
-  "flg_wr": 92.5,
-  "dual_overall": 95.0,
+  "ts": "2026-07-31T02:33:43.540220+00:00",
+  "cycle": 178,
+  "iono_wr": 57.5,
+  "majkel_wr": 86.7,
+  "flg_wr": 82.5,
+  "dual_overall": 94.2,
   "ok": true,
   "iono_rc": 0,
   "majkel_rc": 0,
@@ -13,11 +13,12 @@
   "ship_ready": false,
   "ship_decision": "HOLD",
   "ship_reasons": [
-    "crustle_min 86.35 < 89.0"
+    "iono 50.9375 < 55.0",
+    "crustle_min 85.625 < 89.0"
   ],
   "ship_source": "focus_pool_n8",
-  "ship_iono_pool": 55.625,
-  "ship_crustle_pool": 86.35,
-  "ship_dual_pool": 93.775,
+  "ship_iono_pool": 50.9375,
+  "ship_crustle_pool": 85.625,
+  "ship_dual_pool": 92.7,
   "ship_arch": 85.4
 }
