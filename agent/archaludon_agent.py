@@ -79,6 +79,10 @@ LILLIE = 1227
 FULL_METAL_LAB = 1244
 CRUSHING_HAMMER = 1120  # majkel energy denial (×4)
 
+# crustle lever `deckcons`: deck size above which Explorer's Guidance (-6 deck)
+# is still affordable in the Crustle deck-out race. Overridable for A/B sweeps.
+DECKCONS_EXPLORER_FLOOR = int(os.environ.get("ARCH_DECKCONS_FLOOR", "30"))
+
 RAGING_HAMMER = 224
 METAL_DEFENDER = 253
 TURBO_FLARE = 965  # Cinderace — re-fuel bench after Hammer
@@ -731,6 +735,29 @@ def _crustle_boss_actually_playable(obs) -> bool:
     return any(p for p in (opp.bench or []) if p)
 
 
+def _crustle_explorer_allowed(obs) -> bool:
+    """crustle single lever A/B (2026-07-31), env ARCH_CRUSTLE_LEVER=deckcons.
+
+    Terminal-state profiling of 6000 Crustle games (recordings/metrics/
+    crustle_loss_profile.json) shows we practically never lose the prize race
+    here: ~78% of losses are our own deck-out, and in those the opponent still
+    has ~7 cards of deck left. The wall matchups are a deck-out race we lose by
+    a handful of cards.
+
+    Explorer's Guidance is the single biggest self-inflicted burn in the list:
+    it looks at 6 and *discards 4* to gain 2, i.e. -6 deck per copy, x4 copies.
+    Lillie's Determination by contrast shuffles the hand back in and is roughly
+    deck-neutral, and Poke Pad / Pokegear / Ultra Ball are -1 each. Under this
+    lever Explorer is only allowed while the deck is deep enough that six cards
+    cannot decide the race.
+
+    Default (lever unset) returns True -> byte-identical to previous behaviour.
+    """
+    if os.environ.get("ARCH_CRUSTLE_LEVER", "").strip().lower() != "deckcons":
+        return True
+    return my_state(obs).deckCount > DECKCONS_EXPLORER_FLOOR
+
+
 def detect_matchup(obs):
     opp = opp_state(obs)
     ids = {p.id for p in (opp.active + opp.bench) if p}
@@ -964,9 +991,11 @@ def apply_overrides(obs, opt, score, reason):
                 return max(score, 24000), "Hammer: Stretcher metal (starved)"
             if md >= 2 or (_opp_hammer_seen(obs) and md >= 1):
                 return max(score, 19000), "Hammer: Stretcher metal recovery"
-        if cid == EXPLORER and _energy_starved(obs):
-            if not obs.current.supporterPlayed:
+        if cid == EXPLORER and _crustle_explorer_allowed(obs):
+            if _energy_starved(obs) and not obs.current.supporterPlayed:
                 return max(score, 14000), "Hammer: Explorer dig energy/line"
+        elif cid == EXPLORER:
+            return -5000, "Crustle/deckcons: Explorer burns 6 deck for 2"
         dc = my_state(obs).deckCount
         if dc <= 10 and cid in (EXPLORER, LILLIE):
             if cid == LILLIE and dc <= 3 and my_state(obs).handCount >= dc + 6:
@@ -2333,6 +2362,20 @@ def _should_use_tomato(obs) -> bool:
     if os.environ.get("ARCH_TOMATO_DRAGAPULT", "1").strip().lower() not in ("0", "off", "false"):
         excl = excl - {"dragapult"}
     specialist = m in excl
+    # arch R3 single lever A/B — verdict NULL, do NOT re-run (2026-07-31).
+    # Hypothesis: tomato originally took every "generic" (pre-reveal) turn
+    # because generic was also hiding the alakazam and dragapult boards it could
+    # not yet identify. Both are now explicit tomato matchups, so "generic" is
+    # mostly the opening turns of a crustle / grimmsnarl game — boards our
+    # specialist scorer then has to inherit.
+    # Measured (5 shards x 50 games/opp): meta 76.66%±0.50 → 77.34%±0.52,
+    # diff +0.68 vs 2×se_diff 1.44 → not decisive; dual 93.76 → 93.76 flat.
+    # Left env-gated and OFF by default; ARCH_TOMATO_GENERIC=0 restricts tomato
+    # to the matchups it explicitly owns.
+    if m == "generic" and os.environ.get(
+        "ARCH_TOMATO_GENERIC", "1"
+    ).strip().lower() in ("0", "off", "false"):
+        return False
     # crustle single lever (2026-07-31): detect_matchup is stateless, so once the
     # Crustle / flg shell is KO'd off the board it decays back to "generic" and
     # tomato seizes control mid-game on a board our scorer built. Latch the
@@ -2534,6 +2577,7 @@ def _agent_impl(obs_dict):
         "tomato_md", "tomato+md", "tomato_lethal",
         "tomato_setup", "tomato+setup",
         "tomato_fork", "tomato+fork",
+        "tomato_boss", "tomato+boss",
         "tomato_bc", "tomato+bc", "bc",
     ):
         use_tomato = _should_use_tomato(obs)
@@ -2550,6 +2594,13 @@ def _agent_impl(obs_dict):
         if lever in ("tomato_fork", "tomato+fork"):
             try:
                 pre = _tomato_fork_preempt(obs)
+            except Exception:
+                pre = None
+            if pre:
+                return pre
+        if lever in ("tomato_boss", "tomato+boss"):
+            try:
+                pre = _tomato_boss_preempt(obs)
             except Exception:
                 pre = None
             if pre:
@@ -2730,6 +2781,88 @@ def _tomato_fork_preempt(obs):
         if cid == RELICANTH and fallback is None:
             fallback = i
     return [fallback] if fallback is not None else None
+
+
+def _tomato_boss_preempt(obs):
+    """PRE-delegation gust-for-the-KO (lever `tomato_boss`).
+
+    Bucket-matched regret over 13380 schema-v2 games
+    (`recordings/intel/iono_fragile_transition.md`): inside matched
+    (bench, active energy, turn band, own prizes) buckets, PLAY Boss's Orders
+    is 89.42% WR when taken (n=3706) vs 67.62% when legal and declined
+    (n=77655), ci95 disjoint — the delegate takes a legal Boss on only 4.6% of
+    chances and usually spends the supporter on draw instead.
+
+    The same scan closed the bench-depth family: when the bench first empties
+    post-setup, a bench play is legal in only 11.55% of cases, which is why
+    `tomato_fork` was NULL at floors 2 and 3 — there is nothing to bench.
+
+    Unlike REJECTED R14w (25.2%), this does not swap in our own scorer: tomato
+    still plays the whole game, we only pre-empt this one decision, and only
+    when the gust converts into an immediate KO we could not otherwise take.
+    Returns an option index list, or None to defer to the delegate.
+    """
+    if obs.select is None:
+        return None
+    opts = list(obs.select.option or [])
+    if not opts:
+        return None
+    ctx = obs.select.context
+
+    if ctx == SelectContext.MAIN:
+        if getattr(obs.current, "supporterPlayed", False):
+            return None
+        boss_idx = None
+        for i, o in enumerate(opts):
+            if o.type != OptionType.PLAY:
+                continue
+            card = option_card(obs, o)
+            if card and card.id == BOSS:
+                boss_idx = i
+                break
+        if boss_idx is None:
+            return None
+        attacks = planned_archaludon_attacks(obs)
+        if not attacks:
+            return None
+        killable = [
+            t for t in opp_bench_pokemon(obs)
+            if t and any(effective_damage(a["damage"], t) >= t.hp for a in attacks)
+        ]
+        if not killable:
+            return None
+        # Taking the prize already in front of us is at least as good unless the
+        # bench holds a fatter target, so only gust when it gains prize value.
+        oact = opp_active_pokemon(obs)
+        if oact is not None and any(
+            effective_damage(a["damage"], oact) >= oact.hp for a in attacks
+        ):
+            if max(prize_value(t) for t in killable) <= prize_value(oact):
+                return None
+        return [boss_idx]
+
+    # Boss target select: take the KO-able opponent Pokemon worth the most prizes.
+    if ctx in {SelectContext.SWITCH, SelectContext.TO_ACTIVE}:
+        attacks = planned_archaludon_attacks(obs)
+        if not attacks:
+            return None
+        yi = obs.current.yourIndex
+        best = None
+        for i, o in enumerate(opts):
+            if o.playerIndex is None or o.playerIndex == yi:
+                return None  # our own promotion — never hijack it
+            target = option_card(obs, o)
+            hp = getattr(target, "hp", None)
+            if target is None or hp is None:
+                continue
+            if not any(effective_damage(a["damage"], target) >= hp for a in attacks):
+                continue
+            key = (prize_value(target), -hp)
+            if best is None or key > best[0]:
+                best = (key, i)
+        return [best[1]] if best is not None else None
+
+    return None
 
 
 def _resolve_deck_path() -> str:

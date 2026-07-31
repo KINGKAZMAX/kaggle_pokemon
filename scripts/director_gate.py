@@ -47,6 +47,17 @@ IONO_COLLAPSE_PP = 12.0
 CRUSTLE_COLLAPSE_PP = 10.0
 DUAL_COLLAPSE_PP = 8.0
 
+# ─── Arch ship authority: pooled mean, never the best_gate.json max-latch ───
+# dist/best_gate.json is written by aggressive_loop / archaludon_meta_train under
+# `if wr >= prev` — it is a running MAXIMUM over noisy n=40-48 gates, so it is an
+# upward-biased estimator and must never carry ship authority. Measured
+# 2026-07-31: latch said 85.4 (PASS) while pooled meta n=250 said 76.66 ± 0.50
+# (FAIL) — an 8.7pp false PASS on the only floor that was green.
+POOLED_HISTORY = ROOT.parent / "fleet" / "state" / "pooled_history.jsonl"
+ARCH_POOLED_SUITE = "meta"  # meta_fast is a different, much easier suite
+ARCH_POOLED_MIN_GAMES = 200
+ARCH_POOLED_MAX_AGE_H = 24.0
+
 
 @dataclass
 class GateSnapshot:
@@ -371,7 +382,18 @@ def load_focus_pooled(n: int = FOCUS_POOL_N) -> GateSnapshot | None:
     flg_m = _mean(flgs)
     maj_m = _mean(majs)
     dual_m = _mean(duals)
-    crust_m = _mean(crust_mins)
+
+    # The floor is min(true_flg_wr, true_majkel_wr) >= 89. The unbiased estimator of
+    # that is min(mean_flg, mean_majkel). mean(min per cycle) is NOT: by Jensen it is
+    # biased *down* by ~E|flg-majkel|/2 (measured 0.8-2.4pp on live windows). With the
+    # observed per-cycle sd 3.53 at pool_n=8, a Crustle sitting exactly ON the 89.0
+    # floor would be reported ~87.0 and pass only 2.7% of the time — i.e. the old
+    # estimator made this gate unpassable by construction and would have blocked a
+    # legitimately green ship forever. Floor constant is unchanged at 89.0.
+    crust_m = min(flg_m, maj_m) if (flg_m is not None and maj_m is not None) else None
+    if crust_m is None:
+        crust_m = _mean(crust_mins)
+    crust_cycle_min_m = _mean(crust_mins)  # kept as a variance diagnostic only
 
     # Detect instant collapse vs pool (log only)
     latest = rows[-1]
@@ -430,6 +452,8 @@ def load_focus_pooled(n: int = FOCUS_POOL_N) -> GateSnapshot | None:
             "flg_mean": flg_m,
             "majkel_mean": maj_m,
             "crustle_min_mean": crust_m,
+            "crustle_min_estimator": "min(mean_flg, mean_majkel)",
+            "crustle_mean_of_cycle_mins": crust_cycle_min_m,  # diagnostic, Jensen-biased low
             "dual_mean": dual_m,
             "instant": latest,
             "iono_series": ionos[-FOCUS_POOL_N:],
@@ -439,14 +463,86 @@ def load_focus_pooled(n: int = FOCUS_POOL_N) -> GateSnapshot | None:
     )
 
 
+def load_pooled_arch_overall() -> dict[str, Any] | None:
+    """Most recent qualifying pooled Arch `meta` run from the fleet shard-gate feed.
+
+    Deliberately the MOST RECENT qualifying run, never the max — taking a max here
+    would reintroduce exactly the best_gate.json bias this function exists to remove.
+    Returns None when there is no fresh pooled evidence, which makes the arch floor
+    fail closed in evaluate_ship (arch_overall None → no ship).
+    """
+    if not POOLED_HISTORY.exists():
+        return None
+    best: dict[str, Any] | None = None
+    now = utc_now()
+    try:
+        text = POOLED_HISTORY.read_text(encoding="utf-8-sig", errors="replace")
+    except OSError:
+        return None
+    for line in text.splitlines():
+        line = line.strip()
+        if not line:
+            continue
+        try:
+            r = json.loads(line)
+        except ValueError:
+            continue
+        if r.get("suite") != ARCH_POOLED_SUITE:
+            continue
+        if r.get("role") not in ("arch", "director"):
+            continue
+        if not isinstance(r.get("mean"), (int, float)):
+            continue
+        if float(r.get("total_games_approx") or 0) < ARCH_POOLED_MIN_GAMES:
+            continue
+        ts = _parse_ts(r.get("ts"))
+        if ts is None or (now - ts).total_seconds() / 3600.0 > ARCH_POOLED_MAX_AGE_H:
+            continue
+        if best is None or ts >= best["_ts"]:
+            best = {
+                "mean": float(r["mean"]),
+                "stderr": r.get("stderr"),
+                "n": r.get("total_games_approx"),
+                "label": r.get("label"),
+                "role": r.get("role"),
+                "ts": r.get("ts"),
+                "_ts": ts,
+            }
+    if best is not None:
+        best.pop("_ts", None)
+    return best
+
+
+def _parse_ts(raw: Any) -> datetime | None:
+    if not isinstance(raw, str) or not raw.strip():
+        return None
+    try:
+        d = datetime.fromisoformat(raw.strip().replace("Z", "+00:00"))
+    except ValueError:
+        return None
+    return d.replace(tzinfo=timezone.utc) if d.tzinfo is None else d.astimezone(timezone.utc)
+
+
 def load_ship_snapshot() -> GateSnapshot | None:
-    """Authoritative snapshot for ship: pooled focus + loop Arch WR."""
+    """Authoritative snapshot for ship: pooled focus + POOLED Arch overall.
+
+    Arch ship authority is the pooled multi-shard `meta` mean, not dist/best_gate.json
+    (a max-latch, see ARCH_POOLED_* above). The latch is still carried in raw for the
+    board, labelled as the optimistic upper bound it is.
+    """
     snap = load_focus_pooled() or load_focus_latest()
     if snap is None:
         return None
-    arch = load_best_gate_wr()
-    if arch is not None:
-        snap.arch_overall = arch
+    pooled = load_pooled_arch_overall()
+    latch = load_best_gate_wr()
+    if pooled is not None:
+        snap.arch_overall = pooled["mean"]
+        snap.raw["arch_source"] = f"pooled:{pooled.get('label')} n={pooled.get('n')}"
+        snap.raw["arch_pooled"] = pooled
+    else:
+        snap.arch_overall = None  # fail closed: no fresh pooled arch evidence
+        snap.raw["arch_source"] = "none (no pooled meta run within %.0fh)" % ARCH_POOLED_MAX_AGE_H
+    snap.raw["arch_best_gate_latch"] = latch  # max-latch, NOT ship authority
     return snap
 
 
@@ -487,7 +583,9 @@ def format_board(
     maj = snap.crustle_majkel if snap else None
     crust = snap.crustle_floor_value() if snap else None
     dual = snap.dual_overall if snap else None
-    arch = snap.arch_overall if snap else arch_loop
+    # Never fall back to the best_gate.json max-latch for the arch floor row: with no
+    # snapshot there is no pooled evidence, and "—" is the honest reading.
+    arch = snap.arch_overall if snap else None
 
     v_dec = verdict.decision if verdict else "—"
     v_why = "; ".join(verdict.reasons) if verdict and verdict.reasons else "all gates green" if verdict and verdict.ship else "—"
@@ -524,7 +622,9 @@ def format_board(
         f"| flg Crustle | {flg if flg is not None else '—'} | (component) | — |",
         f"| majkel Crustle | {maj if maj is not None else '—'} | (component) | — |",
         f"| dual overall | {dual if dual is not None else '—'} | ≥max({SHIP_DUAL_FLOOR:.0f}, baseline {dual_base:.1f}) | {pass_fail(dual, max(SHIP_DUAL_FLOOR, dual_base))} |",
-        f"| loop best_gate.json | {arch_loop if arch_loop is not None else '—'} | scout/deepen | — |",
+        f"| loop best_gate.json | {arch_loop if arch_loop is not None else '—'} | scout/deepen | max-latch, NOT ship authority |",
+        f"| arch ship source | {(snap.raw.get('arch_source') if snap else '—')} | pooled `{ARCH_POOLED_SUITE}` n≥{ARCH_POOLED_MIN_GAMES} | fails closed if stale |",
+        f"| crustle_min estimator | min(mean_flg, mean_majkel) | — | mean-of-cycle-mins = {(snap.raw.get('crustle_mean_of_cycle_mins') if snap else None)} (Jensen-biased low) |",
         f"| snapshot source | {(snap.source if snap else '—')} | pool_n={FOCUS_POOL_N} | ship uses pool mean |",
         "",
         f"**Hold reasons**: {v_why}",

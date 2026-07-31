@@ -1,33 +1,35 @@
 {
-  "ts": "2026-07-31T00:57:18+00:00",
+  "ts": "2026-07-31T03:28:02+00:00",
   "utc_day": "2026-07-31",
-  "dayroll_sec": 82961.36834,
+  "dayroll_sec": 73917.117194,
   "submits": 2,
   "remaining": 3,
   "snapshot": {
-    "ts_utc": "2026-07-31T00:57:18+00:00",
-    "arch_overall": 85.4,
-    "iono": 50.3125,
-    "crustle_flg": 89.6875,
-    "crustle_majkel": 88.35,
-    "crustle_min": 86.575,
-    "dual_overall": 91.5625,
+    "ts_utc": "2026-07-31T03:28:02+00:00",
+    "arch_overall": 77.34,
+    "iono": 52.1875,
+    "crustle_flg": 89.0625,
+    "crustle_majkel": 85.2125,
+    "crustle_min": 85.2125,
+    "dual_overall": 94.375,
     "source": "focus_pool_n8",
     "raw": {
       "pool_n": 8,
-      "iono_mean": 50.3125,
+      "iono_mean": 52.1875,
       "iono_n": 8,
-      "flg_mean": 89.6875,
-      "majkel_mean": 88.35,
-      "crustle_min_mean": 86.575,
-      "dual_mean": 91.5625,
+      "flg_mean": 89.0625,
+      "majkel_mean": 85.2125,
+      "crustle_min_mean": 85.2125,
+      "crustle_min_estimator": "min(mean_flg, mean_majkel)",
+      "crustle_mean_of_cycle_mins": 83.125,
+      "dual_mean": 94.375,
       "instant": {
-        "ts": "2026-07-31T00:23:15.524258+00:00",
-        "cycle": 101,
-        "iono_wr": 57.5,
-        "majkel_wr": 91.7,
-        "flg_wr": 90.0,
-        "dual_overall": 92.5,
+        "ts": "2026-07-31T03:27:27.553177+00:00",
+        "cycle": 318,
+        "iono_wr": 47.5,
+        "majkel_wr": 78.3,
+        "flg_wr": 82.5,
+        "dual_overall": 94.2,
         "ok": true,
         "iono_rc": 0,
         "majkel_rc": 0,
@@ -36,42 +38,53 @@
       },
       "iono_series": [
         50.0,
-        47.5,
+        55.0,
         57.5,
         40.0,
         52.5,
-        40.0,
-        57.5,
-        57.5
+        60.0,
+        55.0,
+        47.5
       ],
       "crustle_min_series": [
+        83.3,
+        80.0,
         85.0,
-        82.5,
+        90.0,
+        85.0,
         81.7,
-        86.7,
-        90.0,
-        86.7,
-        90.0,
-        90.0
+        81.7,
+        78.3
       ],
       "dual_series": [
-        89.2,
+        94.2,
+        95.8,
         90.8,
-        95.0,
-        89.2,
-        93.3,
         90.8,
-        91.7,
-        92.5
-      ]
+        97.5,
+        97.5,
+        94.2,
+        94.2
+      ],
+      "arch_source": "pooled:arch_r3_B_nogeneric n=250",
+      "arch_pooled": {
+        "mean": 77.34,
+        "stderr": 0.52,
+        "n": 250,
+        "label": "arch_r3_B_nogeneric",
+        "role": "arch",
+        "ts": "2026-07-31T11:27:49.0751131+08:00"
+      },
+      "arch_best_gate_latch": 85.4
     }
   },
   "verdict": {
     "ship": false,
     "decision": "HOLD",
     "reasons": [
-      "iono 50.3125 < 55.0",
-      "crustle_min 86.575 < 89.0"
+      "arch 77.34 < 83.0",
+      "iono 52.1875 < 55.0",
+      "crustle_min 85.2125 < 89.0"
     ],
     "thresholds": {
       "arch_overall": 83.0,

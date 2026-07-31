@@ -1,0 +1,110 @@
+{
+  "arms": {
+    "0": {
+      "games": 2020,
+      "decided": 2020,
+      "wins": 1060,
+      "other": 0,
+      "deviations": 0,
+      "dev_per_game": 0.0,
+      "decisions": 115696,
+      "win_pct": 52.48,
+      "se": 1.111,
+      "ci95": [
+        50.29,
+        54.65
+      ]
+    },
+    "0.02": {
+      "games": 85,
+      "decided": 85,
+      "wins": 33,
+      "other": 0,
+      "deviations": 65,
+      "dev_per_game": 0.7647,
+      "decisions": 5031,
+      "win_pct": 38.82,
+      "se": 5.286,
+      "ci95": [
+        29.16,
+        49.45
+      ],
+      "diff_vs_control_pp": -13.65,
+      "two_se_diff": 10.8,
+      "verdict": "SIGNIFICANT",
+      "odds_per_deviation": 0.4847
+    },
+    "0.15": {
+      "games": 40,
+      "decided": 40,
+      "wins": 8,
+      "other": 0,
+      "deviations": 207,
+      "dev_per_game": 5.175,
+      "decisions": 2119,
+      "win_pct": 20.0,
+      "se": 6.325,
+      "ci95": [
+        10.5,
+        34.76
+      ],
+      "diff_vs_control_pp": -32.48,
+      "two_se_diff": 12.84,
+      "verdict": "SIGNIFICANT",
+      "odds_per_deviation": 0.7505
+    }
+  },
+  "first_deviation": {
+    "PLAY": {
+      "games": 30,
+      "wins": 12,
+      "win_pct": 40.0,
+      "se": 8.94,
+      "ci95": [
+        24.59,
+        57.68
+      ]
+    },
+    "CARD": {
+      "games": 21,
+      "wins": 8,
+      "win_pct": 38.1,
+      "se": 10.6,
+      "ci95": [
+        20.75,
+        59.12
+      ]
+    },
+    "ATTACH": {
+      "games": 12,
+      "wins": 2,
+      "win_pct": 16.67,
+      "se": 10.76,
+      "ci95": [
+        4.7,
+        44.8
+      ]
+    },
+    "ATTACK": {
+      "games": 10,
+      "wins": 2,
+      "win_pct": 20.0,
+      "se": 12.65,
+      "ci95": [
+        5.67,
+        50.98
+      ]
+    },
+    "EVOLVE": {
+      "games": 5,
+      "wins": 1,
+      "win_pct": 20.0,
+      "se": 17.89,
+      "ci95": [
+        3.62,
+        62.45
+      ]
+    }
+  },
+  "per_deviation": 0.6176
+}

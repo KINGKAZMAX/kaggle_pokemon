@@ -93,3 +93,7 @@ recorded_at,ref,fileName,date,description,status,publicScore,privateScore
 2026-07-30T16:05:22+00:00,55094308,archaludon.tar.gz,2026-07-30 00:00:08.377000,Archaludon R7 PRIMARY day-flip #1 — chase pin 1196 / top 1198+ (live~793.7),COMPLETE,703.3,
 2026-07-30T16:05:22+00:00,55093941,dragapult_ex_sample.tar.gz,2026-07-29 23:27:04.947000,auto Dragapult official pilot+bench localWR=62.5 n=48 core,COMPLETE,502.8,
 2026-07-30T16:05:22+00:00,55093940,archaludon.tar.gz,2026-07-29 23:26:58.467000,auto Archaludon R7 bench-guard localWR=66.7 n=90 core,COMPLETE,599.8,
+2026-07-31T03:22:58+00:00,55122059,arch_v5_r7.tar.gz,2026-07-31 00:07:12.680000,Final lock-in #2: Archaludon v5 R7 historical champion ref 54083197 mu 1196.1,COMPLETE,742.8,
+2026-07-31T03:22:58+00:00,55122053,arch_v5_r7.tar.gz,2026-07-31 00:07:03.263000,Final lock-in #1: Archaludon v5 R7 historical champion ref 54083197 mu 1196.1,COMPLETE,798.6,
+2026-07-31T03:22:58+00:00,55095587,archaludon.tar.gz,2026-07-30 01:00:05.970000,Archaludon R7 PRIMARY day-flip #1 — chase pin 1196 / top 1198+ (live~793.7),COMPLETE,665.4,
+2026-07-31T03:22:58+00:00,55095576,archaludon.tar.gz,2026-07-30 00:59:26.533000,Archaludon R7 PRIMARY day-flip #1 — chase pin 1196 / top 1198+ (live~793.7),COMPLETE,680.3,

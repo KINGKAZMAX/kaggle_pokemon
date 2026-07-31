@@ -36,6 +36,7 @@ from __future__ import annotations
 import argparse
 import json
 import os
+import random
 import sys
 import time
 from datetime import datetime, timezone
@@ -236,24 +237,61 @@ def option_vector(obs, opt) -> list[float]:
 
 
 class _Recorder:
-    """Wraps the hero brain and records every decision it makes."""
+    """Wraps the hero brain and records every decision it makes.
 
-    def __init__(self, brain):
+    With ``explore_eps > 0`` the recorder additionally *deviates*: on a fraction
+    eps of single-selection decisions that have more than one legal option, the
+    rule agent's pick is replaced by a uniformly random legal option and the game
+    plays on from there. This is the only way to identify the value of the
+    options the rule agent never takes -- chosen-action-only logs observe Q(s,a)
+    only at a = pi(s), so no offline model can rank the alternatives (see
+    fleet/state/gputrain_STATE.md, round-1 `q` objective REJECT).
+
+    ``explore_eps = 0`` (the default) is byte-identical to observation-only
+    collection, so the autopilot's dataset is unaffected.
+    """
+
+    def __init__(self, brain, explore_eps: float = 0.0, rng: random.Random | None = None):
         self._brain = brain
+        self._eps = float(explore_eps)
+        self._rng = rng or random.Random()
         self.decisions: list[dict] = []
+        self.n_explored = 0
+        self.n_eligible = 0
 
     def __call__(self, obs_dict):
         picked = self._brain(obs_dict)
+        explored = 0
+        rule_pick: list = []
         try:
             obs = to_observation_class(obs_dict)
             select = getattr(obs, "select", None)
             options = list(getattr(select, "option", None) or []) if select else []
             if options:
-                self.decisions.append({
+                pick_list = list(picked) if isinstance(picked, list) else []
+                # Build the record before deviating, so a feature-extraction
+                # failure can never leave an unlogged deviation in the game.
+                rec = {
                     "s": [round(v, 3) for v in state_vector(obs)],
                     "o": [[round(v, 3) for v in option_vector(obs, o)] for o in options],
-                    "pick": list(picked) if isinstance(picked, list) else [],
-                })
+                    "pick": pick_list,
+                }
+                # Only deviate on single-selection decisions with a real choice.
+                # Any single index into the engine's own option list is legal by
+                # construction, so the swap cannot produce an illegal action.
+                if len(pick_list) == 1 and len(options) > 1:
+                    self.n_eligible += 1
+                    if self._eps > 0.0 and self._rng.random() < self._eps:
+                        alt = self._rng.randrange(len(options))
+                        if alt != pick_list[0]:
+                            rule_pick = pick_list
+                            explored = 1
+                            self.n_explored += 1
+                            rec["pick"] = [alt]
+                            rec["e"] = 1
+                            rec["rp"] = rule_pick
+                            picked = [alt]
+                self.decisions.append(rec)
         except Exception:
             pass  # collection must never perturb the game
         return picked
@@ -298,20 +336,38 @@ def main() -> int:
                     help="Only keep lost games (oversample the failure mode)")
     ap.add_argument("--max-decisions", type=int, default=0,
                     help="Stop early once this many decisions are logged (0 = no cap)")
+    ap.add_argument("--explore-eps", type=float, default=0.0,
+                    help="Deviate to a uniformly random legal option on this "
+                         "fraction of single-selection decisions (0 = pure "
+                         "observation, identical to the legacy collector). "
+                         "Needed to identify the value of unchosen options.")
+    ap.add_argument("--explore-seed", type=int, default=None,
+                    help="Seed for the exploration RNG (default: entropy)")
     args = ap.parse_args()
+    if not 0.0 <= args.explore_eps <= 1.0:
+        print("ERROR: --explore-eps must be in [0,1]", file=sys.stderr)
+        return 1
 
     shard = os.environ.get("PTCG_SHARD", "0")
     lever = os.environ.get("ARCH_IONO_LEVER", "tomato")
 
     out_dir = ROOT / args.out
     out_dir.mkdir(parents=True, exist_ok=True)
-    tag = f"{args.opponent}_{lever}_s{shard}_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}"
+    eps_tag = f"_eps{args.explore_eps:g}" if args.explore_eps > 0 else ""
+    # PID is part of the tag because several shard fleets can start inside the
+    # same wall-clock second; without it two concurrent shards with the same
+    # PTCG_SHARD open the same path with "w" and silently clobber each other.
+    tag = (f"{args.opponent}_{lever}{eps_tag}_s{shard}_"
+           f"{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}_p{os.getpid()}")
     out_path = out_dir / f"iono_decisions_{tag}.jsonl"
 
     hero_deck_path = args.hero_deck or DEFAULT_ARCHALUDON_DECK
     hero_deck = load_deck(hero_deck_path)
     brain = make_archaludon_brain(hero_deck_path)
-    rec = _Recorder(brain)
+    seed = args.explore_seed
+    if seed is None:
+        seed = int.from_bytes(os.urandom(8), "little")
+    rec = _Recorder(brain, explore_eps=args.explore_eps, rng=random.Random(seed))
 
     reg = load_registry()
     opponent_meta(args.opponent, reg)  # fail fast on unknown opponent
@@ -354,6 +410,7 @@ def main() -> int:
                 continue
             if not decisions:
                 continue
+            g_explored = sum(1 for d in decisions if d.get("e"))
             f.write(json.dumps({
                 "schema_version": SCHEMA_VERSION,
                 "game": i,
@@ -361,6 +418,8 @@ def main() -> int:
                 "outcome": outcome,
                 "label": 1 if hero_won else (0 if hero_lost else -1),
                 "n_decisions": len(decisions),
+                "n_explored": g_explored,
+                "explore_eps": args.explore_eps,
                 "decisions": decisions,
             }, ensure_ascii=False) + "\n")
             n_games_written += 1
@@ -390,6 +449,10 @@ def main() -> int:
         "games_written": n_games_written,
         "decisions": n_decisions,
         "losses_only": args.losses_only,
+        "explore_eps": args.explore_eps,
+        "explore_seed": seed,
+        "explore_eligible": rec.n_eligible,
+        "explore_deviations": rec.n_explored,
         "schema_version": SCHEMA_VERSION,
         "state_features": STATE_FEATURES,
         "option_features": OPTION_FEATURES,
@@ -403,6 +466,9 @@ def main() -> int:
     print(f"\n{args.opponent} (gated) {wr:.1f}%  n={n}")
     print(f"OVERALL (gated) {wr:.1f}%")
     print(f"[collect] wrote {n_games_written} games / {n_decisions} decisions -> {out_path}")
+    print(f"[collect] W={wins} L={losses} other={other} "
+          f"explore_eps={args.explore_eps:g} eligible={rec.n_eligible} "
+          f"deviations={rec.n_explored}")
     return 0
 
 
