@@ -27,3 +27,9 @@
 {"ts": "2026-07-31T02:08:40+00:00", "kind": "iono_instant_noise", "instant": 35.0, "pool_mean": 54.0625, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
 {"ts": "2026-07-31T02:24:26+00:00", "kind": "iono_instant_noise", "instant": 35.0, "pool_mean": 47.5, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
 {"ts": "2026-07-31T02:24:48+00:00", "kind": "iono_instant_noise", "instant": 35.0, "pool_mean": 47.5, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T02:38:36+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 54.0625, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T02:42:03+00:00", "kind": "iono_instant_noise", "instant": 40.0, "pool_mean": 52.5, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T02:45:31+00:00", "kind": "iono_instant_noise", "instant": 27.5, "pool_mean": 45.625, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T03:01:16+00:00", "kind": "iono_instant_noise", "instant": 37.5, "pool_mean": 51.875, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T03:04:00+00:00", "kind": "iono_instant_noise", "instant": 35.0, "pool_mean": 49.6875, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}
+{"ts": "2026-07-31T03:04:11+00:00", "kind": "iono_instant_noise", "instant": 35.0, "pool_mean": 49.6875, "pool_n": 8, "action": "HOLD ship; do NOT rollback r14n on single cycle"}

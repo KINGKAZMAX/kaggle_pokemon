@@ -1,10 +1,10 @@
 {
-  "ts_utc": "2026-07-31T02:30:25.668630+00:00",
+  "ts_utc": "2026-07-31T03:02:20.307804+00:00",
   "schema_version": 2,
-  "games": 23780,
-  "wins": 12153,
-  "losses": 11627,
-  "pooled_wr_pct": 51.11,
+  "games": 32180,
+  "wins": 16451,
+  "losses": 15729,
+  "pooled_wr_pct": 51.12,
   "sources": [
     {
       "file": "iono_decisions_real_iono_tomato_s0_20260731T002727Z.jsonl",
@@ -183,6 +183,62 @@
       "skipped": 0
     },
     {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T023248Z.jsonl",
+      "wins": 614,
+      "losses": 586,
+      "games": 1200,
+      "wr_pct": 51.17,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T023717Z.jsonl",
+      "wins": 605,
+      "losses": 595,
+      "games": 1200,
+      "wr_pct": 50.42,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T024147Z.jsonl",
+      "wins": 587,
+      "losses": 613,
+      "games": 1200,
+      "wr_pct": 48.92,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T024620Z.jsonl",
+      "wins": 652,
+      "losses": 548,
+      "games": 1200,
+      "wr_pct": 54.33,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T025055Z.jsonl",
+      "wins": 590,
+      "losses": 610,
+      "games": 1200,
+      "wr_pct": 49.17,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T025530Z.jsonl",
+      "wins": 609,
+      "losses": 591,
+      "games": 1200,
+      "wr_pct": 50.75,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T030012Z.jsonl",
+      "wins": 641,
+      "losses": 559,
+      "games": 1200,
+      "wr_pct": 53.42,
+      "skipped": 0
+    },
+    {
       "file": "iono_decisions_real_iono_tomato_s20_20260731T002801Z.jsonl",
       "wins": 185,
       "losses": 215,
@@ -202,220 +258,220 @@
   "clusters": [
     {
       "cluster": "fragile_board_any",
-      "loss_n": 5253,
-      "loss_pct": 45.18,
+      "loss_n": 7113,
+      "loss_pct": 45.22,
       "loss_ci95": [
-        44.28,
-        46.09
+        44.45,
+        46.0
       ],
-      "win_n": 701,
-      "win_pct": 5.77,
+      "win_n": 957,
+      "win_pct": 5.82,
       "win_ci95": [
-        5.37,
-        6.2
+        5.47,
+        6.19
       ],
-      "delta_pp": 39.41
+      "delta_pp": 39.4
     },
     {
       "cluster": "setup_incomplete_active",
-      "loss_n": 3419,
-      "loss_pct": 29.41,
+      "loss_n": 4623,
+      "loss_pct": 29.39,
       "loss_ci95": [
-        28.58,
-        30.24
+        28.68,
+        30.11
       ],
-      "win_n": 420,
-      "win_pct": 3.46,
+      "win_n": 576,
+      "win_pct": 3.5,
       "win_ci95": [
-        3.15,
-        3.8
+        3.23,
+        3.79
       ],
-      "delta_pp": 25.95
+      "delta_pp": 25.89
     },
     {
       "cluster": "active_energy_lt2",
-      "loss_n": 3052,
-      "loss_pct": 26.25,
+      "loss_n": 4118,
+      "loss_pct": 26.18,
       "loss_ci95": [
-        25.46,
-        27.06
+        25.5,
+        26.87
       ],
-      "win_n": 257,
-      "win_pct": 2.11,
+      "win_n": 354,
+      "win_pct": 2.15,
       "win_ci95": [
-        1.87,
+        1.94,
         2.39
       ],
-      "delta_pp": 24.13
+      "delta_pp": 24.03
     },
     {
       "cluster": "bench_empty",
-      "loss_n": 3369,
-      "loss_pct": 28.98,
+      "loss_n": 4541,
+      "loss_pct": 28.87,
       "loss_ci95": [
-        28.16,
-        29.81
+        28.17,
+        29.58
       ],
-      "win_n": 148,
-      "win_pct": 1.22,
+      "win_n": 219,
+      "win_pct": 1.33,
       "win_ci95": [
-        1.04,
-        1.43
+        1.17,
+        1.52
       ],
-      "delta_pp": 27.76
+      "delta_pp": 27.54
     },
     {
       "cluster": "opponent_prizes_le2",
-      "loss_n": 9850,
-      "loss_pct": 84.72,
+      "loss_n": 13341,
+      "loss_pct": 84.82,
       "loss_ci95": [
-        84.05,
-        85.36
+        84.25,
+        85.37
       ],
-      "win_n": 4984,
-      "win_pct": 41.01,
+      "win_n": 6826,
+      "win_pct": 41.49,
       "win_ci95": [
-        40.14,
-        41.89
+        40.74,
+        42.25
       ],
-      "delta_pp": 43.71
+      "delta_pp": 43.32
     },
     {
       "cluster": "hero_prizes_ge4",
-      "loss_n": 5370,
-      "loss_pct": 46.19,
+      "loss_n": 7262,
+      "loss_pct": 46.17,
       "loss_ci95": [
-        45.28,
-        47.09
+        45.39,
+        46.95
       ],
-      "win_n": 767,
-      "win_pct": 6.31,
+      "win_n": 1052,
+      "win_pct": 6.39,
       "win_ci95": [
-        5.89,
-        6.76
+        6.03,
+        6.78
       ],
-      "delta_pp": 39.87
+      "delta_pp": 39.77
     },
     {
       "cluster": "prize_deficit_ge2",
-      "loss_n": 6034,
-      "loss_pct": 51.9,
+      "loss_n": 8146,
+      "loss_pct": 51.79,
       "loss_ci95": [
-        50.99,
-        52.8
+        51.01,
+        52.57
       ],
-      "win_n": 168,
-      "win_pct": 1.38,
+      "win_n": 240,
+      "win_pct": 1.46,
       "win_ci95": [
-        1.19,
-        1.61
+        1.29,
+        1.65
       ],
-      "delta_pp": 50.51
+      "delta_pp": 50.33
     },
     {
       "cluster": "hand_le2",
-      "loss_n": 2017,
-      "loss_pct": 17.35,
+      "loss_n": 2724,
+      "loss_pct": 17.32,
       "loss_ci95": [
-        16.67,
-        18.05
+        16.73,
+        17.92
       ],
-      "win_n": 1223,
-      "win_pct": 10.06,
+      "win_n": 1656,
+      "win_pct": 10.07,
       "win_ci95": [
-        9.54,
-        10.61
+        9.62,
+        10.54
       ],
-      "delta_pp": 7.28
+      "delta_pp": 7.25
     },
     {
       "cluster": "deck_le5",
-      "loss_n": 256,
-      "loss_pct": 2.2,
+      "loss_n": 360,
+      "loss_pct": 2.29,
       "loss_ci95": [
-        1.95,
-        2.48
+        2.07,
+        2.53
       ],
-      "win_n": 937,
-      "win_pct": 7.71,
+      "win_n": 1238,
+      "win_pct": 7.53,
       "win_ci95": [
-        7.25,
-        8.2
+        7.13,
+        7.94
       ],
-      "delta_pp": -5.51
+      "delta_pp": -5.24
     },
     {
       "cluster": "turn_ge12",
-      "loss_n": 7007,
-      "loss_pct": 60.26,
+      "loss_n": 9486,
+      "loss_pct": 60.31,
       "loss_ci95": [
-        59.37,
-        61.15
+        59.54,
+        61.07
       ],
-      "win_n": 11063,
-      "win_pct": 91.03,
+      "win_n": 14951,
+      "win_pct": 90.88,
       "win_ci95": [
-        90.51,
-        91.53
+        90.43,
+        91.31
       ],
-      "delta_pp": -30.77
+      "delta_pp": -30.57
     },
     {
       "cluster": "iono_threat_active",
-      "loss_n": 223,
-      "loss_pct": 1.92,
+      "loss_n": 315,
+      "loss_pct": 2.0,
       "loss_ci95": [
-        1.68,
-        2.18
+        1.8,
+        2.23
       ],
-      "win_n": 151,
-      "win_pct": 1.24,
+      "win_n": 200,
+      "win_pct": 1.22,
       "win_ci95": [
         1.06,
-        1.46
+        1.39
       ],
-      "delta_pp": 0.68
+      "delta_pp": 0.79
     }
   ],
   "last_active": {
     "loss": {
       "archaludon_ex": {
-        "n": 7671,
-        "pct": 65.98
+        "n": 10390,
+        "pct": 66.06
       },
       "duraludon": {
-        "n": 2126,
-        "pct": 18.29
+        "n": 2868,
+        "pct": 18.23
       },
       "relicanth": {
-        "n": 1289,
-        "pct": 11.09
+        "n": 1747,
+        "pct": 11.11
       },
       "cinderace": {
-        "n": 537,
-        "pct": 4.62
+        "n": 716,
+        "pct": 4.55
       },
       "none": {
-        "n": 4,
-        "pct": 0.03
+        "n": 8,
+        "pct": 0.05
       }
     },
     "win": {
       "archaludon_ex": {
-        "n": 11566,
-        "pct": 95.17
+        "n": 15665,
+        "pct": 95.22
       },
       "duraludon": {
-        "n": 363,
-        "pct": 2.99
+        "n": 491,
+        "pct": 2.98
       },
       "cinderace": {
-        "n": 167,
-        "pct": 1.37
+        "n": 210,
+        "pct": 1.28
       },
       "relicanth": {
-        "n": 57,
-        "pct": 0.47
+        "n": 85,
+        "pct": 0.52
       }
     }
   },
