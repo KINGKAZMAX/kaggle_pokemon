@@ -2371,6 +2371,7 @@ def _agent_impl(obs_dict):
         "tomato_md", "tomato+md", "tomato_lethal",
         "tomato_setup", "tomato+setup",
         "tomato_fork", "tomato+fork",
+        "tomato_prior", "learned_prior",
     ):
         use_tomato = _should_use_tomato(obs)
     elif lever in ("tomato_strict", "iono_only"):
@@ -2397,6 +2398,13 @@ def _agent_impl(obs_dict):
                         out = _tomato_lethal_postfilter(obs, out)
                     elif lever_pf in ("tomato_setup", "tomato+setup"):
                         out = _tomato_setup_postfilter(obs, out)
+                    elif lever_pf in ("tomato_prior", "learned_prior"):
+                        try:
+                            if detect_matchup(obs) == "iono":
+                                from agent.iono_prior_policy import choose_with_prior
+                                out = choose_with_prior(obs, out)
+                        except Exception:
+                            pass
                     return out
             except Exception:
                 pass  # fall through to our scorer

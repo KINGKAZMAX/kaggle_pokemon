@@ -226,3 +226,8 @@
 {"ts": "2026-07-31T00:01:00.344769+00:00", "cycle": 42, "iono_wr": 42.5, "majkel_wr": 85.0, "flg_wr": 87.5, "dual_overall": 94.2, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
 {"ts": "2026-07-31T00:01:22.030454+00:00", "cycle": 43, "iono_wr": 60.0, "majkel_wr": 90.0, "flg_wr": 82.5, "dual_overall": 89.2, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
 {"ts": "2026-07-31T00:01:44.682798+00:00", "cycle": 44, "iono_wr": 57.5, "majkel_wr": 86.7, "flg_wr": 92.5, "dual_overall": 94.2, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
+{"ts": "2026-07-31T00:02:07.651725+00:00", "cycle": 45, "iono_wr": 42.5, "majkel_wr": 90.0, "flg_wr": 87.5, "dual_overall": 95.0, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
+{"ts": "2026-07-31T00:02:30.422674+00:00", "cycle": 46, "iono_wr": 47.5, "majkel_wr": 91.7, "flg_wr": 95.0, "dual_overall": 91.7, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
+{"ts": "2026-07-31T00:02:53.886559+00:00", "cycle": 47, "iono_wr": 37.5, "majkel_wr": 86.7, "flg_wr": 85.0, "dual_overall": 97.5, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
+{"ts": "2026-07-31T00:03:17.104394+00:00", "cycle": 48, "iono_wr": 60.0, "majkel_wr": 85.0, "flg_wr": 92.5, "dual_overall": 90.8, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
+{"ts": "2026-07-31T00:03:42.565598+00:00", "cycle": 49, "iono_wr": null, "majkel_wr": 93.3, "flg_wr": 85.0, "dual_overall": 91.7, "ok": false, "iono_rc": 4294967295, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}

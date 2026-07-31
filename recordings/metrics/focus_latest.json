@@ -1,24 +1,24 @@
 {
-  "ts": "2026-07-31T00:01:44.682798+00:00",
-  "cycle": 44,
-  "iono_wr": 57.5,
-  "majkel_wr": 86.7,
-  "flg_wr": 92.5,
-  "dual_overall": 94.2,
-  "ok": true,
-  "iono_rc": 0,
+  "ts": "2026-07-31T00:03:42.565598+00:00",
+  "cycle": 49,
+  "iono_wr": null,
+  "majkel_wr": 93.3,
+  "flg_wr": 85.0,
+  "dual_overall": 91.7,
+  "ok": false,
+  "iono_rc": 4294967295,
   "majkel_rc": 0,
   "flg_rc": 0,
   "dual_rc": 0,
   "ship_ready": false,
   "ship_decision": "HOLD",
   "ship_reasons": [
-    "iono 53.125 < 55.0",
-    "crustle_min 86.1625 < 89.0"
+    "iono 48.75 < 55.0",
+    "crustle_min 86.675 < 89.0"
   ],
   "ship_source": "focus_pool_n8",
-  "ship_iono_pool": 53.125,
-  "ship_crustle_pool": 86.1625,
-  "ship_dual_pool": 92.6125,
+  "ship_iono_pool": 48.75,
+  "ship_crustle_pool": 86.675,
+  "ship_dual_pool": 93.35,
   "ship_arch": 85.4
 }
