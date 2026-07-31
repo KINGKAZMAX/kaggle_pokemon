@@ -1,0 +1,24 @@
+{
+  "ts": "2026-07-31T00:01:22.030454+00:00",
+  "cycle": 43,
+  "iono_wr": 60.0,
+  "majkel_wr": 90.0,
+  "flg_wr": 82.5,
+  "dual_overall": 89.2,
+  "ok": true,
+  "iono_rc": 0,
+  "majkel_rc": 0,
+  "flg_rc": 0,
+  "dual_rc": 0,
+  "ship_ready": false,
+  "ship_decision": "HOLD",
+  "ship_reasons": [
+    "iono 53.125 < 55.0",
+    "crustle_min 85.5375 < 89.0"
+  ],
+  "ship_source": "focus_pool_n8",
+  "ship_iono_pool": 53.125,
+  "ship_crustle_pool": 85.5375,
+  "ship_dual_pool": 92.8125,
+  "ship_arch": 85.4
+}
