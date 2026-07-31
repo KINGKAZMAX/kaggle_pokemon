@@ -1,6 +1,6 @@
 # Anti-meta local training director
 
-Updated: `2026-07-31T01:01:46+00:00`
+Updated: `2026-07-31T01:13:02+00:00`
 
 ## Objective
 
@@ -18,19 +18,27 @@ Build an Archaludon anti-meta/router candidate without burning Kaggle CAP. Curre
 
 ## Iono failure target
 
-- Dataset games: 1660
-- Pooled WR: 51.33%
+- Dataset games: 3260
+- Pooled WR: 50.37%
 - Main cluster: fragile_board_any = incomplete evolved active OR active energy <2 OR empty bench.
 
 ## Latest training artifact
 
-- Summary: `E:\PTCG_AI_Battle_Challenge\kaggle_pokemon\artifacts\iono_prior_v2\iono_prior_20260731T010309Z.json`
-- Checkpoint: `E:\PTCG_AI_Battle_Challenge\kaggle_pokemon\artifacts\iono_prior_v2\iono_prior_20260731T010309Z.pt`
-- Decisions: 86108
-- Best win multi-option top1: 0.5562943816184998
-- Fragile decisions: 52258 (loss=27129, win=25129)
+- Summary: `E:\PTCG_AI_Battle_Challenge\kaggle_pokemon\artifacts\iono_prior_v2\iono_prior_20260731T011433Z.json`
+- Checkpoint: `E:\PTCG_AI_Battle_Challenge\kaggle_pokemon\artifacts\iono_prior_v2\iono_prior_20260731T011433Z.pt`
+- Decisions: 167282
+- Best win multi-option top1: 0.5837962031364441
+- Fragile decisions: 101214 (loss=53284, win=47930)
 
 ## Required KEEP gates before wiring/submission
+
+Runtime smoke after wiring was **REJECTED**:
+
+- `tomato` n80 vs real_iono: 52.5%
+- `tomato_bc` with `ARCH_IONO_BC_ENABLE=1`, fragile scope, margin 2.0, n80 vs real_iono: 40.0%
+- Safety: BC model inference is disabled by default unless `ARCH_IONO_BC_ENABLE=1`; plain `ARCH_IONO_LEVER=tomato_bc` falls back to tomato.
+
+Do **not** submit or package this BC runtime. Keep the dataset/checkpoint as training evidence only.
 
 ```powershell
 E:\PTCG_AI_Battle_Challenge\fleet\Shard-Gate.ps1 -Role iono -Script scripts\gate_archaludon.py -Games 300 -Extra @('--opponents','real_iono') -Env @{ARCH_IONO_LEVER='tomato_bc'} -Label iono_bc_fragile

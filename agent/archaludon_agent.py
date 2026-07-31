@@ -27,6 +27,7 @@ for p in ([os.path.dirname(os.path.abspath(ROOT))] if ROOT else []) + [CG_PATH]:
 
 from cg.api import (
     AreaType,
+    CardType,
     LogType,
     OptionType,
     SelectContext,
@@ -2345,6 +2346,173 @@ def _should_use_tomato(obs) -> bool:
     return not specialist
 
 
+# ── Iono BC prior runtime (NumPy-only, optional) ─────────────────────────────
+
+_IONO_BC = None
+_IONO_BC_ERROR = None
+_BC_OPTION_TYPES = list(OptionType)
+_BC_OPTION_TYPE_INDEX = {t: i for i, t in enumerate(_BC_OPTION_TYPES)}
+
+
+def _to_int(x, default=0):
+    try:
+        return int(x)
+    except Exception:
+        return default
+
+
+def _bc_pokemon_features(pkm):
+    if pkm is None:
+        return [0.0, 0.0, 0.0]
+    hp = _to_int(getattr(pkm, "hp", 0))
+    max_hp = _to_int(getattr(pkm, "maxHp", hp), hp)
+    return [float(hp), float(max(0, max_hp - hp)), float(energy_count(pkm))]
+
+
+def _bc_state_vector(obs):
+    """Schema-v2 state vector, matched to scripts/collect_iono_decisions.py."""
+    me = my_state(obs)
+    opp = opp_state(obs)
+    act = active_pokemon(obs)
+    oact = opp_active_pokemon(obs)
+    act_hp, act_dmg, act_en = _bc_pokemon_features(act)
+    opp_hp, opp_dmg, opp_en = _bc_pokemon_features(oact)
+    act_id = _to_int(getattr(act, "id", 0)) if act else 0
+    opp_id = _to_int(getattr(oact, "id", 0)) if oact else 0
+    ctx = getattr(getattr(obs, "select", None), "context", None)
+    n_opts = len(getattr(getattr(obs, "select", None), "option", None) or [])
+    odata = CARD_DB.get(opp_id)
+    return [
+        float(_to_int(getattr(obs.current, "turn", 0))),
+        float(len(getattr(me, "prize", None) or [])),
+        float(len(getattr(opp, "prize", None) or [])),
+        float(_to_int(getattr(me, "handCount", 0))),
+        float(_to_int(getattr(me, "deckCount", 0))),
+        float(len(getattr(me, "discard", None) or [])),
+        float(len(getattr(me, "bench", None) or [])),
+        float(len(getattr(opp, "bench", None) or [])),
+        act_hp, act_dmg, act_en,
+        float(act_id == DURALUDON),
+        float(act_id == ARCHALUDON_EX),
+        float(act_id == CINDERACE),
+        float(act_id == RELICANTH),
+        float(act is None),
+        opp_hp, opp_dmg, opp_en,
+        float(bool(getattr(odata, "ex", False) or getattr(odata, "megaEx", False))) if oact else 0.0,
+        float(opp_id in IONO_THREATS),
+        float(ctx == SelectContext.MAIN),
+        float(ctx in (SelectContext.SETUP_ACTIVE_POKEMON, SelectContext.SETUP_BENCH_POKEMON)),
+        float(ctx in (SelectContext.SWITCH, SelectContext.TO_ACTIVE, SelectContext.TO_BENCH)),
+        float(n_opts),
+    ]
+
+
+def _bc_option_vector(obs, opt):
+    vec = [0.0] * len(_BC_OPTION_TYPES)
+    idx = _BC_OPTION_TYPE_INDEX.get(getattr(opt, "type", None))
+    if idx is not None:
+        vec[idx] = 1.0
+    card = option_card(obs, opt)
+    card_id = _to_int(getattr(card, "id", 0)) if card is not None else _to_int(getattr(opt, "cardId", 0))
+    cdata = CARD_DB.get(card_id)
+    ctype = getattr(cdata, "cardType", None)
+    is_pkm = float(ctype == CardType.POKEMON)
+    is_energy = float(ctype in (CardType.BASIC_ENERGY, CardType.SPECIAL_ENERGY))
+    targets_opp = 0.0
+    try:
+        yi = obs.current.yourIndex
+        targets_opp = float(opt.playerIndex is not None and opt.playerIndex != yi)
+    except Exception:
+        pass
+    return vec + [float(card_id), is_pkm, is_energy, targets_opp]
+
+
+def _bc_is_fragile_state(s):
+    # Raw schema-v2 indices: my_bench=6, active_energy=10, active Arch=12,
+    # active Cinderace=13. Same cluster as analyze_iono_loss_clusters.py.
+    return (not (s[12] >= 0.5 or s[13] >= 0.5)) or s[10] < 2.0 or s[6] <= 0.0
+
+
+def _get_iono_bc():
+    """Lazy-load the exported NumPy prior. Missing/failed model means fallback."""
+    global _IONO_BC, _IONO_BC_ERROR
+    if os.environ.get("ARCH_IONO_BC_ENABLE", "0").strip().lower() not in ("1", "true", "on"):
+        return None
+    if _IONO_BC is not None:
+        return _IONO_BC
+    if _IONO_BC_ERROR is not None:
+        return None
+    try:
+        import numpy as np
+
+        env = os.environ.get("ARCH_IONO_BC_NPZ")
+        here = os.path.dirname(os.path.abspath(__file__)) if ROOT else os.getcwd()
+        candidates = []
+        if env:
+            candidates.append(env)
+        candidates += [
+            os.path.join(here, "models", "iono_prior_v2.npz"),
+            os.path.join(here, "iono_prior_v2.npz"),
+            os.path.join(os.getcwd(), "iono_prior_v2.npz"),
+        ]
+        path = next((p for p in candidates if p and os.path.exists(p)), None)
+        if path is None:
+            _IONO_BC_ERROR = "iono_prior_v2.npz not found"
+            return None
+        z = np.load(path, allow_pickle=True)
+        _IONO_BC = {"np": np, "path": path, **{k: z[k] for k in z.files}}
+        return _IONO_BC
+    except Exception as e:
+        _IONO_BC_ERROR = f"{type(e).__name__}: {e}"
+        return None
+
+
+def _silu(np, x):
+    return x / (1.0 + np.exp(-x))
+
+
+def _iono_bc_pick(obs):
+    """Return [option_index] from BC prior, or None to fall back to tomato."""
+    model = _get_iono_bc()
+    if model is None or obs.select is None:
+        return None
+    opts = list(obs.select.option or [])
+    if not opts:
+        return None
+    # Model was trained only on single-choice decisions.
+    if not (obs.select.minCount <= 1 <= obs.select.maxCount):
+        return None
+    max_options = int(model.get("max_options", [32])[0])
+    if len(opts) > max_options:
+        return None
+    try:
+        raw_s = _bc_state_vector(obs)
+        scope = os.environ.get("ARCH_IONO_BC_SCOPE", "fragile").strip().lower()
+        if scope == "fragile" and not _bc_is_fragile_state(raw_s):
+            return None
+        np = model["np"]
+        s = np.asarray(raw_s, dtype=np.float32)
+        s = (s - model["state_mean"]) / model["state_std"]
+        o = np.asarray([_bc_option_vector(obs, opt) for opt in opts], dtype=np.float32)
+        o[:, -4] = np.log1p(o[:, -4]) / 8.0
+
+        se = _silu(np, s @ model["se0_w"].T + model["se0_b"])
+        se = _silu(np, se @ model["se2_w"].T + model["se2_b"])
+        oe = _silu(np, o @ model["oe0_w"].T + model["oe0_b"])
+        se_exp = np.repeat(se.reshape(1, -1), len(opts), axis=0)
+        h = _silu(np, np.concatenate([se_exp, oe], axis=1) @ model["sc0_w"].T + model["sc0_b"])
+        logits = (h @ model["sc2_w"].T + model["sc2_b"]).reshape(-1)
+        order = np.argsort(logits)[::-1]
+        if len(order) < 1:
+            return None
+        margin = float(os.environ.get("ARCH_IONO_BC_MARGIN", "0.0") or 0.0)
+        if len(order) > 1 and float(logits[order[0]] - logits[order[1]]) < margin:
+            return None
+        return [int(order[0])]
+    except Exception:
+        return None
+
+
 def _agent_impl(obs_dict):
     obs = to_observation_class(obs_dict)
     if obs.select is None:
@@ -2366,6 +2534,7 @@ def _agent_impl(obs_dict):
         "tomato_md", "tomato+md", "tomato_lethal",
         "tomato_setup", "tomato+setup",
         "tomato_fork", "tomato+fork",
+        "tomato_bc", "tomato+bc", "bc",
     ):
         use_tomato = _should_use_tomato(obs)
     elif lever in ("tomato_strict", "iono_only"):
@@ -2374,6 +2543,10 @@ def _agent_impl(obs_dict):
         except Exception:
             use_tomato = False
     if use_tomato:
+        if lever in ("tomato_bc", "tomato+bc", "bc"):
+            bc = _iono_bc_pick(obs)
+            if bc:
+                return bc
         if lever in ("tomato_fork", "tomato+fork"):
             try:
                 pre = _tomato_fork_preempt(obs)
