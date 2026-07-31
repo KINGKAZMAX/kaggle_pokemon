@@ -1,10 +1,10 @@
 {
-  "ts": "2026-07-31T05:34:02.302246+00:00",
-  "cycle": 646,
-  "iono_wr": 42.5,
+  "ts": "2026-07-31T06:04:19.427750+00:00",
+  "cycle": 727,
+  "iono_wr": 47.5,
   "majkel_wr": 91.7,
   "flg_wr": 97.5,
-  "dual_overall": 95.8,
+  "dual_overall": 100.0,
   "ok": true,
   "iono_rc": 0,
   "majkel_rc": 0,
@@ -13,12 +13,12 @@
   "ship_ready": false,
   "ship_decision": "REGRESS",
   "ship_reasons": [
-    "iono 49.6875 < 55.0",
-    "dual 97.8 < baseline 98.2375 (no regression)"
+    "iono 50.3125 < 55.0",
+    "dual 97.1875 < baseline 98.2375 (no regression)"
   ],
   "ship_source": "focus_pool_n8",
-  "ship_iono_pool": 49.6875,
-  "ship_crustle_pool": 93.8625,
-  "ship_dual_pool": 97.8,
+  "ship_iono_pool": 50.3125,
+  "ship_crustle_pool": 93.125,
+  "ship_dual_pool": 97.1875,
   "ship_arch": 85.4
 }
