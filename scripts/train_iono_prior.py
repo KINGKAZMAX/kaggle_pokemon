@@ -23,6 +23,13 @@ Usage
   python scripts/train_iono_prior.py --device cuda --epochs 30
   python scripts/train_iono_prior.py --data episodes/iono_bc --batch-size 16384
 
+For the 2026-07-31 anti-meta path, use the schema-v2 collector plus fragile-board
+weights:
+
+  python scripts/train_iono_prior.py --data episodes/iono_bc_v2 --out artifacts/iono_prior_v2 \
+    --device auto --epochs 40 --objective pos --select-on prior \
+    --loss-weight 2.0 --fragile-loss-weight 3.0 --fragile-win-weight 1.5
+
 This script only writes under ``artifacts/``. It never touches agent code or gates;
 wiring the prior into a new ``ARCH_IONO_LEVER`` branch is a separate, gated step.
 """
@@ -129,6 +136,27 @@ def load_dataset(data_dir: Path, max_options: int) -> dict:
     return ds
 
 
+def fragile_board_mask(state: torch.Tensor) -> torch.Tensor:
+    """Decision-level version of recordings/intel/iono_loss_clusters.
+
+    State layout comes from collect_iono_decisions.py::STATE_FEATURES:
+      6  = my_bench
+      10 = active energy
+      12 = active is Archaludon ex
+      13 = active is Cinderace
+
+    The loss report found this cluster in 40.33% of losses vs 5.50% of wins:
+    incomplete evolved active OR active energy < 2 OR empty bench.  We weight
+    this cluster during training instead of adding another brittle hand rule.
+    """
+    if state.shape[1] < 14:
+        return torch.zeros(state.shape[0], dtype=torch.bool, device=state.device)
+    evolved_active = (state[:, 12] >= 0.5) | (state[:, 13] >= 0.5)
+    low_energy = state[:, 10] < 2.0
+    empty_bench = state[:, 6] <= 0.0
+    return (~evolved_active) | low_energy | empty_bench
+
+
 def normalise(ds: dict) -> tuple[torch.Tensor, torch.Tensor]:
     """Per-feature mean/std over the state block (options are mostly one-hot)."""
     mean = ds["state"].mean(0)
@@ -183,6 +211,10 @@ def main() -> int:
     ap.add_argument("--max-options", type=int, default=32)
     ap.add_argument("--loss-weight", type=float, default=2.0,
                     help="Oversample factor for decisions from lost games")
+    ap.add_argument("--fragile-loss-weight", type=float, default=1.0,
+                    help="Extra multiplier for fragile-board decisions from lost games")
+    ap.add_argument("--fragile-win-weight", type=float, default=1.0,
+                    help="Extra multiplier for fragile-board decisions from won games")
     ap.add_argument("--objective", default="pos", choices=("signed", "pos", "exp"),
                     help="Prior-head weighting. 'signed' is the original "
                          "advantage*CE (unbounded below -> diverges). 'pos' clamps "
@@ -211,6 +243,10 @@ def main() -> int:
           f"{torch.cuda.get_device_name(0) if dev == 'cuda' else ''}", flush=True)
 
     ds = load_dataset(ROOT / args.data, args.max_options)
+    # Compute evidence flags on the raw feature scale.  normalise() rewrites the
+    # state tensor in place, so doing this afterwards would turn thresholds like
+    # "active energy < 2" into nonsense.
+    fragile_raw = fragile_board_mask(ds["state"])
     mean, std = normalise(ds)
 
     n = ds["state"].shape[0]
@@ -230,8 +266,29 @@ def main() -> int:
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, T_max=max(1, args.epochs))
     amp = (dev == "cuda")
 
-    # Per-decision sample weight: lost games count more (the oversample).
+    # Per-decision sample weight: lost games count more (the oversample), and
+    # fragile-board states count even more because they are the measured Iono
+    # failure mode.  This keeps the optimization target tied to the evidence in
+    # recordings/intel/iono_loss_clusters.json instead of vibes.
+    fragile = fragile_raw.to(device)
     w_all = torch.where(ds["label"] > 0.5, 1.0, args.loss_weight).to(device)
+    fragile_mult = torch.where(
+        ds["label"] > 0.5,
+        torch.tensor(float(args.fragile_win_weight), device=device),
+        torch.tensor(float(args.fragile_loss_weight), device=device),
+    )
+    w_all = torch.where(fragile, w_all * fragile_mult, w_all)
+    fragile_total = int(fragile.sum().item())
+    fragile_loss = int((fragile & (ds["label"] < 0.5)).sum().item())
+    fragile_win = int((fragile & (ds["label"] > 0.5)).sum().item())
+    print(
+        f"[weights] loss_weight={args.loss_weight} "
+        f"fragile_loss_weight={args.fragile_loss_weight} "
+        f"fragile_win_weight={args.fragile_win_weight} "
+        f"fragile_decisions={fragile_total} "
+        f"(loss={fragile_loss}, win={fragile_win})",
+        flush=True,
+    )
 
     history = []
     best_val = math.inf
@@ -324,6 +381,12 @@ def main() -> int:
         "checkpoint": str(ckpt_path),
         "decisions": n, "val_decisions": n_val,
         "objective": args.objective, "select_on": args.select_on,
+        "loss_weight": args.loss_weight,
+        "fragile_loss_weight": args.fragile_loss_weight,
+        "fragile_win_weight": args.fragile_win_weight,
+        "fragile_decisions": fragile_total,
+        "fragile_loss_decisions": fragile_loss,
+        "fragile_win_decisions": fragile_win,
         "best_criterion": best_val,
         "best_val_win_multi_top1": max(
             (h["val_win_multi_top1"] for h in history
