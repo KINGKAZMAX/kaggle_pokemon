@@ -1,23 +1,23 @@
 {
-  "ts": "2026-07-31T04:34:11.158281+00:00",
-  "cycle": 485,
-  "iono_wr": 50.0,
+  "ts": "2026-07-31T05:04:17.546024+00:00",
+  "cycle": 566,
+  "iono_wr": 52.5,
   "majkel_wr": 95.0,
-  "flg_wr": 100.0,
-  "dual_overall": 96.7,
+  "flg_wr": 92.5,
+  "dual_overall": 98.3,
   "ok": true,
   "iono_rc": 0,
   "majkel_rc": 0,
   "flg_rc": 0,
   "dual_rc": 0,
   "ship_ready": false,
-  "ship_decision": "HOLD",
+  "ship_decision": "REGRESS",
   "ship_reasons": [
-    "iono 48.4375 < 55.0"
+    "dual 98.1125 < baseline 98.2375 (no regression)"
   ],
   "ship_source": "focus_pool_n8",
-  "ship_iono_pool": 48.4375,
-  "ship_crustle_pool": 92.9125,
-  "ship_dual_pool": 96.875,
+  "ship_iono_pool": 55.0,
+  "ship_crustle_pool": 94.3625,
+  "ship_dual_pool": 98.1125,
   "ship_arch": 85.4
 }

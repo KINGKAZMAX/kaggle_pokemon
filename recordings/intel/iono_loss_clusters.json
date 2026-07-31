@@ -1,10 +1,10 @@
 {
-  "ts_utc": "2026-07-31T04:30:11.973235+00:00",
+  "ts_utc": "2026-07-31T05:00:04.179472+00:00",
   "schema_version": 2,
-  "games": 48980,
-  "wins": 24988,
-  "losses": 23992,
-  "pooled_wr_pct": 51.02,
+  "games": 53780,
+  "wins": 27414,
+  "losses": 26366,
+  "pooled_wr_pct": 50.97,
   "sources": [
     {
       "file": "iono_decisions_real_iono_tomato_s0_20260731T002727Z.jsonl",
@@ -351,6 +351,38 @@
       "skipped": 0
     },
     {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T043358Z_p147636.jsonl",
+      "wins": 599,
+      "losses": 601,
+      "games": 1200,
+      "wr_pct": 49.92,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T044120Z_p163744.jsonl",
+      "wins": 631,
+      "losses": 569,
+      "games": 1200,
+      "wr_pct": 52.58,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T044852Z_p167164.jsonl",
+      "wins": 618,
+      "losses": 582,
+      "games": 1200,
+      "wr_pct": 51.5,
+      "skipped": 0
+    },
+    {
+      "file": "iono_decisions_real_iono_tomato_s0_20260731T045624Z_p172636.jsonl",
+      "wins": 578,
+      "losses": 622,
+      "games": 1200,
+      "wr_pct": 48.17,
+      "skipped": 0
+    },
+    {
       "file": "iono_decisions_real_iono_tomato_s20_20260731T002801Z.jsonl",
       "wins": 185,
       "losses": 215,
@@ -370,220 +402,220 @@
   "clusters": [
     {
       "cluster": "fragile_board_any",
-      "loss_n": 10808,
-      "loss_pct": 45.05,
+      "loss_n": 11902,
+      "loss_pct": 45.14,
       "loss_ci95": [
-        44.42,
-        45.68
+        44.54,
+        45.74
       ],
-      "win_n": 1457,
-      "win_pct": 5.83,
+      "win_n": 1593,
+      "win_pct": 5.81,
       "win_ci95": [
-        5.55,
-        6.13
+        5.54,
+        6.09
       ],
-      "delta_pp": 39.22
+      "delta_pp": 39.33
     },
     {
       "cluster": "setup_incomplete_active",
-      "loss_n": 7030,
-      "loss_pct": 29.3,
+      "loss_n": 7749,
+      "loss_pct": 29.39,
       "loss_ci95": [
-        28.73,
-        29.88
+        28.84,
+        29.94
       ],
-      "win_n": 892,
-      "win_pct": 3.57,
+      "win_n": 972,
+      "win_pct": 3.55,
       "win_ci95": [
-        3.35,
-        3.81
+        3.33,
+        3.77
       ],
-      "delta_pp": 25.73
+      "delta_pp": 25.84
     },
     {
       "cluster": "active_energy_lt2",
-      "loss_n": 6229,
-      "loss_pct": 25.96,
+      "loss_n": 6865,
+      "loss_pct": 26.04,
       "loss_ci95": [
-        25.41,
-        26.52
+        25.51,
+        26.57
       ],
-      "win_n": 535,
-      "win_pct": 2.14,
+      "win_n": 591,
+      "win_pct": 2.16,
       "win_ci95": [
-        1.97,
+        1.99,
         2.33
       ],
-      "delta_pp": 23.82
+      "delta_pp": 23.88
     },
     {
       "cluster": "bench_empty",
-      "loss_n": 6913,
-      "loss_pct": 28.81,
+      "loss_n": 7611,
+      "loss_pct": 28.87,
       "loss_ci95": [
-        28.24,
-        29.39
+        28.32,
+        29.42
       ],
-      "win_n": 339,
-      "win_pct": 1.36,
+      "win_n": 366,
+      "win_pct": 1.34,
       "win_ci95": [
-        1.22,
-        1.51
+        1.21,
+        1.48
       ],
-      "delta_pp": 27.46
+      "delta_pp": 27.53
     },
     {
       "cluster": "opponent_prizes_le2",
-      "loss_n": 20366,
-      "loss_pct": 84.89,
+      "loss_n": 22351,
+      "loss_pct": 84.77,
       "loss_ci95": [
-        84.43,
-        85.33
+        84.33,
+        85.2
       ],
-      "win_n": 10394,
-      "win_pct": 41.6,
+      "win_n": 11457,
+      "win_pct": 41.79,
       "win_ci95": [
-        40.99,
-        42.21
+        41.21,
+        42.38
       ],
-      "delta_pp": 43.29
+      "delta_pp": 42.98
     },
     {
       "cluster": "hero_prizes_ge4",
-      "loss_n": 11072,
-      "loss_pct": 46.15,
+      "loss_n": 12171,
+      "loss_pct": 46.16,
       "loss_ci95": [
-        45.52,
-        46.78
+        45.56,
+        46.76
       ],
-      "win_n": 1618,
-      "win_pct": 6.48,
+      "win_n": 1789,
+      "win_pct": 6.53,
       "win_ci95": [
-        6.18,
-        6.79
+        6.24,
+        6.82
       ],
-      "delta_pp": 39.67
+      "delta_pp": 39.64
     },
     {
       "cluster": "prize_deficit_ge2",
-      "loss_n": 12443,
+      "loss_n": 13673,
       "loss_pct": 51.86,
       "loss_ci95": [
-        51.23,
-        52.5
+        51.26,
+        52.46
       ],
-      "win_n": 371,
-      "win_pct": 1.48,
+      "win_n": 412,
+      "win_pct": 1.5,
       "win_ci95": [
-        1.34,
-        1.64
+        1.37,
+        1.65
       ],
-      "delta_pp": 50.38
+      "delta_pp": 50.36
     },
     {
       "cluster": "hand_le2",
-      "loss_n": 4142,
-      "loss_pct": 17.26,
+      "loss_n": 4568,
+      "loss_pct": 17.33,
       "loss_ci95": [
-        16.79,
-        17.75
+        16.87,
+        17.79
       ],
-      "win_n": 2509,
-      "win_pct": 10.04,
+      "win_n": 2766,
+      "win_pct": 10.09,
       "win_ci95": [
-        9.67,
-        10.42
+        9.74,
+        10.45
       ],
-      "delta_pp": 7.22
+      "delta_pp": 7.24
     },
     {
       "cluster": "deck_le5",
-      "loss_n": 557,
-      "loss_pct": 2.32,
+      "loss_n": 616,
+      "loss_pct": 2.34,
       "loss_ci95": [
-        2.14,
-        2.52
+        2.16,
+        2.53
       ],
-      "win_n": 1838,
-      "win_pct": 7.36,
+      "win_n": 2025,
+      "win_pct": 7.39,
       "win_ci95": [
-        7.04,
-        7.69
+        7.08,
+        7.7
       ],
-      "delta_pp": -5.03
+      "delta_pp": -5.05
     },
     {
       "cluster": "turn_ge12",
-      "loss_n": 14475,
-      "loss_pct": 60.33,
+      "loss_n": 15871,
+      "loss_pct": 60.19,
       "loss_ci95": [
-        59.71,
-        60.95
+        59.6,
+        60.78
       ],
-      "win_n": 22679,
-      "win_pct": 90.76,
+      "win_n": 24879,
+      "win_pct": 90.75,
       "win_ci95": [
-        90.39,
-        91.11
+        90.4,
+        91.09
       ],
-      "delta_pp": -30.43
+      "delta_pp": -30.56
     },
     {
       "cluster": "iono_threat_active",
-      "loss_n": 446,
-      "loss_pct": 1.86,
+      "loss_n": 500,
+      "loss_pct": 1.9,
       "loss_ci95": [
-        1.7,
-        2.04
+        1.74,
+        2.07
       ],
-      "win_n": 297,
-      "win_pct": 1.19,
+      "win_n": 323,
+      "win_pct": 1.18,
       "win_ci95": [
         1.06,
-        1.33
+        1.31
       ],
-      "delta_pp": 0.67
+      "delta_pp": 0.72
     }
   ],
   "last_active": {
     "loss": {
       "archaludon_ex": {
-        "n": 15885,
-        "pct": 66.21
+        "n": 17426,
+        "pct": 66.09
       },
       "duraludon": {
-        "n": 4385,
-        "pct": 18.28
+        "n": 4830,
+        "pct": 18.32
       },
       "relicanth": {
-        "n": 2634,
-        "pct": 10.98
+        "n": 2908,
+        "pct": 11.03
       },
       "cinderace": {
-        "n": 1077,
-        "pct": 4.49
+        "n": 1191,
+        "pct": 4.52
       },
       "none": {
         "n": 11,
-        "pct": 0.05
+        "pct": 0.04
       }
     },
     "win": {
       "archaludon_ex": {
-        "n": 23790,
-        "pct": 95.21
+        "n": 26103,
+        "pct": 95.22
       },
       "duraludon": {
-        "n": 754,
+        "n": 829,
         "pct": 3.02
       },
       "cinderace": {
-        "n": 306,
-        "pct": 1.22
+        "n": 339,
+        "pct": 1.24
       },
       "relicanth": {
-        "n": 138,
-        "pct": 0.55
+        "n": 143,
+        "pct": 0.52
       }
     }
   },
