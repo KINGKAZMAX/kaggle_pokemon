@@ -1,6 +1,8 @@
-﻿{
-  "dual_overall": 90.0,
-  "note": "director floor baseline 2026-07-31; ratchet up only when all ship floors green",
-  "raised_at": "2026-07-30T17:09:00+00:00",
-  "source": "director_init"
+{
+  "dual_overall": 95.725,
+  "arch_overall": 85.4,
+  "iono": 55.3125,
+  "crustle_min": 93.9625,
+  "raised_at": "2026-07-31T03:41:27+00:00",
+  "source": "focus_pool_n8"
 }

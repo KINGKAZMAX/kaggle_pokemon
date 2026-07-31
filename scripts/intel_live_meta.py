@@ -57,12 +57,27 @@ KEY_MAP = {
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--replays", default=str(HV_ROOT / "replays"))
+    ap.add_argument(
+        "--exclude-ids",
+        default=None,
+        help="JSON file with {'ids': [...]}; those episodes are skipped. Use a "
+             "pre-pull snapshot here to read ONLY the freshly pulled episodes, "
+             "which makes the resulting mixture an independent second sample "
+             "rather than a re-read of the same replays.",
+    )
+    ap.add_argument("--tag", default="", help="suffix for the output filenames")
     args = ap.parse_args()
 
     replay_dir = Path(args.replays)
     files = sorted(replay_dir.glob("ep*.json"))
+    excluded = 0
+    if args.exclude_ids:
+        skip = set(json.loads(Path(args.exclude_ids).read_text(encoding="utf-8"))["ids"])
+        keep = [f for f in files if "".join(c for c in f.stem if c.isdigit()) not in skip]
+        excluded = len(files) - len(keep)
+        files = keep
     if not files:
-        print(f"[error] no replays under {replay_dir}")
+        print(f"[error] no replays under {replay_dir} (excluded {excluded})")
         return 1
 
     idx_path = HV_ROOT / "index.json"
@@ -118,10 +133,11 @@ def main() -> int:
     old = json.loads((ROOT / "field" / "weights.json").read_text(encoding="utf-8"))
     old_w = old.get("opponent_archetype_weights", {})
 
-    stamp = datetime.now(timezone.utc).strftime("%Y%m%d")
+    stamp = datetime.now(timezone.utc).strftime("%Y%m%d") + args.tag
     payload = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         "source_replays": len(files),
+        "excluded_replays": excluded,
         "decks_classified": n_decks,
         "unknown_decks": total.get("unknown", 0),
         "known_decks": known_n,
@@ -135,10 +151,12 @@ def main() -> int:
     out_json = OUT_JSON_DIR / f"live_meta_{stamp}.json"
     out_json.write_text(json.dumps(payload, indent=2), encoding="utf-8")
 
+    out_md = OUT_MD if not args.tag else OUT_MD.with_name(f"{OUT_MD.stem}{args.tag}.md")
     lines = [
         f"# Live top-band opponent distribution — {stamp}",
         "",
-        f"- Replays parsed: **{len(files)}** (top public episodes pulled today)",
+        f"- Replays parsed: **{len(files)}** (top public episodes pulled today"
+        + (f", **{excluded} excluded** as already-seen → independent sample)" if excluded else ")"),
         f"- Decks classified: **{n_decks}** (unknown {total.get('unknown', 0)}, "
         f"known {known_n})",
         f"- Current `field/weights.json`: updated **{old.get('updated')}**, "
@@ -165,12 +183,12 @@ def main() -> int:
         "",
         "This file is a proposal. `field/weights.json` is unchanged.",
     ]
-    OUT_MD.parent.mkdir(parents=True, exist_ok=True)
-    OUT_MD.write_text("\n".join(lines) + "\n", encoding="utf-8")
+    out_md.parent.mkdir(parents=True, exist_ok=True)
+    out_md.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     print("\n".join(lines))
     print(f"\n[intel] wrote {out_json}")
-    print(f"[intel] wrote {OUT_MD}")
+    print(f"[intel] wrote {out_md}")
     return 0
 
 

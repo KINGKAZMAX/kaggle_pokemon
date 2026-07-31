@@ -42,14 +42,17 @@ from cg.api import to_observation_class  # noqa: E402
 from agent.lucario_mcts_runtime import random_agent  # noqa: E402
 from eval.field_registry import (  # noqa: E402
     load_registry,
+    opponent_meta,
     opponents_for_suite,
     resolve_deck_path,
 )
 from eval.harness import (  # noqa: E402
     DEFAULT_ARCHALUDON_DECK,
     _wilson_pct,
+    get_opponent_brain,
     load_deck,
     make_archaludon_brain,
+    official_archetype_for_opponent,
     run_match,
 )
 
@@ -94,12 +97,44 @@ def make_rulecore_brain(deck_path: str) -> tuple:
     return brain, stats
 
 
+def pilot_for(
+    name: str, deck_path: str, deck_o: list[int], reg: dict, mode: str
+) -> tuple | None:
+    """Resolve the opponent pilot for one entry under the requested mode.
+
+    `as_registry` / `upgrade` reproduce the *real* ship gate's opponent set: they
+    keep the native sample pilot wherever `field/registry.json` says `native`, and
+    only differ on the `random` entries. That makes them the honest A/B for mixed
+    suites like `meta`, where forcing every opponent to one pilot would misstate
+    arm A. Returns None for entries `gate_vs_opponent` silently skips (brain=native
+    with no official archetype, e.g. meta_kangaskhan_james), so the gated
+    denominator matches the gate. (intel, 2026-07-31)
+    """
+    kind = opponent_meta(name, reg).get("opponent_brain", "native")
+    if mode in ("as_registry", "upgrade"):
+        if kind == "native":
+            if official_archetype_for_opponent(name, deck_o) is None:
+                return None
+            return get_opponent_brain(name, registry=reg)[0], None
+        return pilot_for(
+            name, deck_path, deck_o, reg,
+            "random" if mode == "as_registry" else "rulecore",
+        )
+    if mode == "random":
+        return random_agent, None
+    return make_rulecore_brain(deck_path)
+
+
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--suite", default="top6")
     ap.add_argument("--opponents", nargs="*", default=None)
     ap.add_argument("--games", type=int, default=30, help="games per opponent")
-    ap.add_argument("--pilot", choices=["random", "rulecore"], default="random")
+    ap.add_argument(
+        "--pilot",
+        choices=["random", "rulecore", "as_registry", "upgrade"],
+        default="random",
+    )
     args = ap.parse_args()
 
     reg = load_registry()
@@ -117,10 +152,11 @@ def main() -> int:
         if not deck_path.exists():
             continue
         deck_o = load_deck(deck_path)
-        if args.pilot == "random":
-            opp_brain, stats = random_agent, None
-        else:
-            opp_brain, stats = make_rulecore_brain(str(deck_path))
+        resolved = pilot_for(name, str(deck_path), deck_o, reg, args.pilot)
+        if resolved is None:
+            print(f"  {name:32s} ({args.pilot:11s})  SKIPPED (gate returns None)")
+            continue
+        opp_brain, stats = resolved
 
         wins = losses = draws = unfinished = 0
         for i in range(args.games):
@@ -148,7 +184,7 @@ def main() -> int:
         fb = ""
         if stats and stats["calls"]:
             fb = f"  illegal_fallback={100 * stats['fallback'] / stats['calls']:.1f}%"
-        print(f"  {name:32s} ({args.pilot:8s}) {wr:6.1f}%  [{lo:5.1f}, {hi:5.1f}]  "
+        print(f"  {name:32s} ({args.pilot:11s}) {wr:6.1f}%  [{lo:5.1f}, {hi:5.1f}]  "
               f"W{wins}/L{losses}/D{draws}/U{unfinished}{fb}")
 
     wr, lo, hi = _wilson_pct(total_w, total_n)

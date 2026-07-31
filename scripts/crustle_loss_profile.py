@@ -132,13 +132,25 @@ def run_match_traced(deck_a, deck_b, brain_a, brain_b, hero_seat, *, max_steps=N
     return outcome, trace
 
 
-def profile(opp_name, games, hero_deck, registry):
+def profile(opp_name, games, hero_deck, registry, pilot="as_registry"):
     meta = opponent_meta(opp_name, registry)
     deck_path = resolve_deck_path(opp_name, registry)
     if not deck_path.exists():
         raise SystemExit(f"missing opponent deck: {deck_path}")
     deck_o = load_deck(deck_path)
-    opp_brain, brain_label = get_opponent_brain(opp_name, registry=registry)
+    if pilot == "rulecore":
+        # Both crustle floor opponents are opponent_brain=random (intel, R3), so
+        # the shipped instrument profiles losses against a pilot nobody plays.
+        # Reuse intel's validated deck-agnostic pilot so the loss *composition*
+        # can be read under a competent opponent. (crustle, 2026-07-31)
+        if str(Path(__file__).resolve().parent) not in sys.path:
+            sys.path.insert(0, str(Path(__file__).resolve().parent))
+        from intel_pilot_ab import make_rulecore_brain
+
+        opp_brain, _stats = make_rulecore_brain(str(deck_path))
+        brain_label = "rulecore"
+    else:
+        opp_brain, brain_label = get_opponent_brain(opp_name, registry=registry)
     hero_brain = make_archaludon_brain()
 
     rows = []
@@ -249,6 +261,13 @@ def main() -> int:
     ap.add_argument("--out", default=None)
     ap.add_argument("--keep-rows", action="store_true", help="persist per-game rows (for --merge)")
     ap.add_argument("--merge", nargs="*", default=None, help="pool shard JSONs instead of playing")
+    ap.add_argument(
+        "--pilot",
+        choices=["as_registry", "rulecore"],
+        default="as_registry",
+        help="as_registry = the shipped gate's pilot (random for both crustle "
+             "decks); rulecore = intel's competent deck-agnostic pilot",
+    )
     args = ap.parse_args()
 
     if args.merge:
@@ -262,9 +281,9 @@ def main() -> int:
     registry = load_registry()
     hero_deck = load_deck(args.hero_deck or DEFAULT_ARCHALUDON_DECK)
 
-    report = {"games_per_opp": args.games, "opponents": []}
+    report = {"games_per_opp": args.games, "pilot": args.pilot, "opponents": []}
     for opp in args.opponents:
-        brain_label, rows = profile(opp, args.games, hero_deck, registry)
+        brain_label, rows = profile(opp, args.games, hero_deck, registry, args.pilot)
         s = summarize(opp, brain_label, rows)
         if args.keep_rows:
             s["rows"] = rows

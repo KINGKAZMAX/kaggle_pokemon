@@ -57,6 +57,19 @@ POOLED_HISTORY = ROOT.parent / "fleet" / "state" / "pooled_history.jsonl"
 ARCH_POOLED_SUITE = "meta"  # meta_fast is a different, much easier suite
 ARCH_POOLED_MIN_GAMES = 200
 ARCH_POOLED_MAX_AGE_H = 24.0
+# ─── Second false-PASS pathway: the newest pooled row can be an EXPERIMENT ARM ───
+# "newest qualifying pooled meta run" fixed the max-latch bias but left a hole: the
+# fleet's A/B arms land in the same pooled_history.jsonl, so a lane's env-gated B arm
+# silently becomes the arch ship number. Measured 2026-07-31T03:42Z: authority was
+# `arch_r4_meta_B_grimtomato` (ARCH_*_GRIMTOMATO on, explicitly NOT promoted to
+# default) — benign that time (78.6 vs base 78.48) but the mechanism is unbounded: a
+# B arm that clears 83 would report PASS for a lever the packaged build does not
+# contain. Ship authority now requires provable default config: Shard-Gate.ps1 records
+# env_effective (every ARCH_*/PTCG_* the shards actually inherited, which also catches
+# levers leaked from the shell rather than passed via -Env) and is_default_config.
+# Rows without that provenance are rejected -> arch floor fails closed.
+# Produce a compliant row with:  Shard-Gate.ps1 -ClearLeverEnv -Suite meta ...
+ARCH_POOLED_REQUIRE_DEFAULT_CONFIG = True
 
 
 @dataclass
@@ -474,6 +487,7 @@ def load_pooled_arch_overall() -> dict[str, Any] | None:
     if not POOLED_HISTORY.exists():
         return None
     best: dict[str, Any] | None = None
+    rejected: list[dict[str, Any]] = []
     now = utc_now()
     try:
         text = POOLED_HISTORY.read_text(encoding="utf-8-sig", errors="replace")
@@ -498,6 +512,16 @@ def load_pooled_arch_overall() -> dict[str, Any] | None:
         ts = _parse_ts(r.get("ts"))
         if ts is None or (now - ts).total_seconds() / 3600.0 > ARCH_POOLED_MAX_AGE_H:
             continue
+        if ARCH_POOLED_REQUIRE_DEFAULT_CONFIG and not _is_default_config_row(r):
+            rejected.append(
+                {
+                    "label": r.get("label"),
+                    "mean": float(r["mean"]),
+                    "ts": r.get("ts"),
+                    "why": _nondefault_reason(r),
+                }
+            )
+            continue
         if best is None or ts >= best["_ts"]:
             best = {
                 "mean": float(r["mean"]),
@@ -506,11 +530,50 @@ def load_pooled_arch_overall() -> dict[str, Any] | None:
                 "label": r.get("label"),
                 "role": r.get("role"),
                 "ts": r.get("ts"),
+                "config": "default",
                 "_ts": ts,
             }
     if best is not None:
         best.pop("_ts", None)
+        if rejected:
+            best["rejected_nondefault"] = rejected[-4:]
+    elif rejected:
+        return {"mean": None, "rejected_nondefault": rejected[-4:]}
     return best
+
+
+def _is_default_config_row(row: dict[str, Any]) -> bool:
+    """True only when the row PROVES it came from the default build.
+
+    Absence of provenance is not proof of default: every row written before
+    Shard-Gate.ps1 started recording env_effective is rejected on purpose, so the
+    arch floor fails closed instead of trusting an unknown configuration.
+    """
+    eff = row.get("env_effective")
+    if isinstance(eff, dict):
+        return not _lever_env(eff)
+    return row.get("is_default_config") is True
+
+
+# Infra vars, not agent config (Launch-Fleet exports PTCG_ROOT into every lane shell).
+# Kept in sync with $FLEET_BENIGN_ENV in fleet\Shard-Gate.ps1; tolerated here too so
+# rows written by an older Shard-Gate are still judged on levers only.
+BENIGN_ENV_KEYS = frozenset({"PTCG_SHARD", "PTCG_ROOT", "PTCG_QUIET"})
+
+
+def _lever_env(eff: dict[str, Any]) -> dict[str, Any]:
+    return {k: v for k, v in eff.items() if k not in BENIGN_ENV_KEYS and str(v) != ""}
+
+
+def _nondefault_reason(row: dict[str, Any]) -> str:
+    if "env_effective" not in row and "is_default_config" not in row:
+        return "no config provenance (pre-dates env_effective recording)"
+    eff = row.get("env_effective")
+    if isinstance(eff, dict):
+        lev = _lever_env(eff)
+        if lev:
+            return "levers on: " + " ".join(f"{k}={v}" for k, v in sorted(lev.items()))
+    return "is_default_config=false"
 
 
 def _parse_ts(raw: Any) -> datetime | None:
@@ -535,13 +598,20 @@ def load_ship_snapshot() -> GateSnapshot | None:
         return None
     pooled = load_pooled_arch_overall()
     latch = load_best_gate_wr()
-    if pooled is not None:
+    if pooled is not None and pooled.get("mean") is not None:
         snap.arch_overall = pooled["mean"]
-        snap.raw["arch_source"] = f"pooled:{pooled.get('label')} n={pooled.get('n')}"
+        snap.raw["arch_source"] = f"pooled:{pooled.get('label')} n={pooled.get('n')} config=default"
         snap.raw["arch_pooled"] = pooled
     else:
-        snap.arch_overall = None  # fail closed: no fresh pooled arch evidence
-        snap.raw["arch_source"] = "none (no pooled meta run within %.0fh)" % ARCH_POOLED_MAX_AGE_H
+        snap.arch_overall = None  # fail closed: no fresh DEFAULT-CONFIG pooled evidence
+        rej = (pooled or {}).get("rejected_nondefault") or []
+        if rej:
+            snap.raw["arch_source"] = (
+                "none (%d fresh pooled meta run(s) rejected: not provably default config)" % len(rej)
+            )
+            snap.raw["arch_pooled_rejected"] = rej
+        else:
+            snap.raw["arch_source"] = "none (no pooled meta run within %.0fh)" % ARCH_POOLED_MAX_AGE_H
     snap.raw["arch_best_gate_latch"] = latch  # max-latch, NOT ship authority
     return snap
 

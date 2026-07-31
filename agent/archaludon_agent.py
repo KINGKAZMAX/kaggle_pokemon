@@ -79,8 +79,9 @@ LILLIE = 1227
 FULL_METAL_LAB = 1244
 CRUSHING_HAMMER = 1120  # majkel energy denial (×4)
 
-# crustle lever `deckcons`: deck size above which Explorer's Guidance (-6 deck)
-# is still affordable in the Crustle deck-out race. Overridable for A/B sweeps.
+# crustle lever `deckcons` (KEPT 2026-07-31): deck size above which Explorer's
+# Guidance (-6 deck) is still affordable in the Crustle deck-out race.
+# Overridable for threshold sweeps; ARCH_CRUSTLE_DECKCONS=0 disables the lever.
 DECKCONS_EXPLORER_FLOOR = int(os.environ.get("ARCH_DECKCONS_FLOOR", "30"))
 
 RAGING_HAMMER = 224
@@ -736,24 +737,34 @@ def _crustle_boss_actually_playable(obs) -> bool:
 
 
 def _crustle_explorer_allowed(obs) -> bool:
-    """crustle single lever A/B (2026-07-31), env ARCH_CRUSTLE_LEVER=deckcons.
+    """crustle lever `deckcons` — KEPT and default ON 2026-07-31.
 
     Terminal-state profiling of 6000 Crustle games (recordings/metrics/
-    crustle_loss_profile.json) shows we practically never lose the prize race
-    here: ~78% of losses are our own deck-out, and in those the opponent still
+    crustle_deckout_diagnosis.md) shows we practically never lose the prize race
+    here: 76-82% of losses are our own deck-out, and in those the opponent still
     has ~7 cards of deck left. The wall matchups are a deck-out race we lose by
     a handful of cards.
 
     Explorer's Guidance is the single biggest self-inflicted burn in the list:
     it looks at 6 and *discards 4* to gain 2, i.e. -6 deck per copy, x4 copies.
     Lillie's Determination by contrast shuffles the hand back in and is roughly
-    deck-neutral, and Poke Pad / Pokegear / Ultra Ball are -1 each. Under this
-    lever Explorer is only allowed while the deck is deep enough that six cards
-    cannot decide the race.
+    deck-neutral, and Poke Pad / Pokegear / Ultra Ball are -1 each. So Explorer
+    is only allowed while the deck is deep enough that six cards cannot decide
+    the race. The old guard fired at deckCount <= 10, long past the point of no
+    return, and it lumped in Lillie, which actually refills the deck.
 
-    Default (lever unset) returns True -> byte-identical to previous behaviour.
+    Pooled A/B, gate_archaludon.py 5x1500 per cell, same session:
+
+        arm       majkel            flg
+        base      86.16 +- 0.23     89.06 +- 0.57
+        deckcons  95.30 +- 0.43     95.78 +- 0.30
+
+    +9.14pp / +6.72pp, both CI95 disjoint. min(flg, majkel) 86.16 -> 95.30
+    against a ship floor of 89.
+
+    Set ARCH_CRUSTLE_DECKCONS=0 to restore the old behaviour (A/B arm A).
     """
-    if os.environ.get("ARCH_CRUSTLE_LEVER", "").strip().lower() != "deckcons":
+    if os.environ.get("ARCH_CRUSTLE_DECKCONS", "1").strip() == "0":
         return True
     return my_state(obs).deckCount > DECKCONS_EXPLORER_FLOOR
 
@@ -2361,6 +2372,26 @@ def _should_use_tomato(obs) -> bool:
     # (NULL, floor held). Default ON; ARCH_TOMATO_DRAGAPULT=0 restores ours.
     if os.environ.get("ARCH_TOMATO_DRAGAPULT", "1").strip().lower() not in ("0", "off", "false"):
         excl = excl - {"dragapult"}
+    # arch R4 single lever KEEP (2026-07-31): grimmsnarl was the last big matchup
+    # still on our own scorer and it is 65.7% of the live top-band field. Every
+    # gate scores it against `opponent_brain: random` and saturates at
+    # 97.18%±0.20, so the R13 override table had never been measured against a
+    # pilot. Under `intel_pilot_ab.py --pilot rulecore` (3% illegal fallback,
+    # U0) the same 3 decks measure our scorer at 74.00%±1.10 vs the sample_75wr
+    # delegate at 91.12%±0.47 — +17.12pp, ci95 disjoint, 900 games per arm. So
+    # _apply_grimmsnarl_overrides (R13) is a net liability against anything that
+    # actually plays the deck; it only looked fine because the pilot was random.
+    # Guards, both NULL (flat), no floor touched:
+    #   meta 78.48%±0.36 → 78.60%±0.73  (2×se_diff 1.63)
+    #   dual 96.40%±0.34 → 96.96%±0.27  (2×se_diff 0.87, floor ≥90 held)
+    # meta/dual are flat *because* their grimmsnarl decks are random-piloted and
+    # already saturated — the gain is real but invisible to the ship floors.
+    # Verified no detection leak: none of the iono / alakazam / crustle /
+    # dragapult gate decks contain any GRIMMSNARL_LINE or MUNKIDORI_IDS card, so
+    # this cannot move those matchups (their per-opponent swings were seed noise).
+    # Default ON; ARCH_TOMATO_GRIMMSNARL=0 restores ours.
+    if os.environ.get("ARCH_TOMATO_GRIMMSNARL", "1").strip().lower() not in ("0", "off", "false"):
+        excl = excl - {"grimmsnarl"}
     specialist = m in excl
     # arch R3 single lever A/B — verdict NULL, do NOT re-run (2026-07-31).
     # Hypothesis: tomato originally took every "generic" (pre-reveal) turn
@@ -2578,6 +2609,7 @@ def _agent_impl(obs_dict):
         "tomato_setup", "tomato+setup",
         "tomato_fork", "tomato+fork",
         "tomato_boss", "tomato+boss",
+        "tomato_boss2", "tomato+boss2",
         "tomato_bc", "tomato+bc", "bc",
     ):
         use_tomato = _should_use_tomato(obs)
@@ -2598,9 +2630,11 @@ def _agent_impl(obs_dict):
                 pre = None
             if pre:
                 return pre
-        if lever in ("tomato_boss", "tomato+boss"):
+        if lever in ("tomato_boss", "tomato+boss", "tomato_boss2", "tomato+boss2"):
             try:
-                pre = _tomato_boss_preempt(obs)
+                pre = _tomato_boss_preempt(
+                    obs, lookahead=lever in ("tomato_boss2", "tomato+boss2")
+                )
             except Exception:
                 pre = None
             if pre:
@@ -2783,8 +2817,41 @@ def _tomato_fork_preempt(obs):
     return [fallback] if fallback is not None else None
 
 
-def _tomato_boss_preempt(obs):
+def _boss2_loaded_threats(obs, attacks):
+    """Tier-2 target set for `tomato_boss2`: the benched 2-prize IONO_THREAT
+    (Bellibolt ex / Kilowattrel) already holding >= 2 energy that our planned
+    attack two-shots. That Pokemon is the one promoted fully charged the moment
+    our active dies, so dragging it up now starts the two-shot on our terms.
+    """
+    best = max((a["damage"] for a in attacks), default=0)
+    if best <= 0:
+        return []
+    out = []
+    for t in opp_bench_pokemon(obs):
+        if not t or t.id not in IONO_THREATS or energy_count(t) < 2:
+            continue
+        hp = getattr(t, "hp", None)
+        if not hp or effective_damage(best, t) * 2 < hp:
+            continue
+        out.append(t)
+    return out
+
+
+def _boss2_active_is_loaded_threat(obs) -> bool:
+    """Gusting a loaded threat while one is already Active is a sidegrade."""
+    oact = opp_active_pokemon(obs)
+    return bool(oact is not None and oact.id in IONO_THREATS and energy_count(oact) >= 2)
+
+
+def _tomato_boss_preempt(obs, lookahead: bool = False):
     """PRE-delegation gust-for-the-KO (lever `tomato_boss`).
+
+    `lookahead=True` is the `tomato_boss2` widening: tier 1 (immediate KO) is
+    unchanged and still wins whenever it applies, but when no bench target dies
+    this turn we also gust a `_boss2_loaded_threats` target. Rationale: the
+    immediate-KO condition only fires ~0.7x/game against a delegate that
+    declines 95.4% of legal Bosses, so the mechanism is target-starved, not
+    wrong.
 
     Bucket-matched regret over 13380 schema-v2 games
     (`recordings/intel/iono_fragile_transition.md`): inside matched
@@ -2830,7 +2897,9 @@ def _tomato_boss_preempt(obs):
             if t and any(effective_damage(a["damage"], t) >= t.hp for a in attacks)
         ]
         if not killable:
-            return None
+            if not lookahead or _boss2_active_is_loaded_threat(obs):
+                return None
+            return [boss_idx] if _boss2_loaded_threats(obs, attacks) else None
         # Taking the prize already in front of us is at least as good unless the
         # bench holds a fatter target, so only gust when it gains prize value.
         oact = opp_active_pokemon(obs)
@@ -2848,6 +2917,8 @@ def _tomato_boss_preempt(obs):
             return None
         yi = obs.current.yourIndex
         best = None
+        alt = None  # tier-2 (`tomato_boss2`): loaded threat we only two-shot
+        bestdmg = max((a["damage"] for a in attacks), default=0)
         for i, o in enumerate(opts):
             if o.playerIndex is None or o.playerIndex == yi:
                 return None  # our own promotion — never hijack it
@@ -2855,12 +2926,22 @@ def _tomato_boss_preempt(obs):
             hp = getattr(target, "hp", None)
             if target is None or hp is None:
                 continue
-            if not any(effective_damage(a["damage"], target) >= hp for a in attacks):
-                continue
-            key = (prize_value(target), -hp)
-            if best is None or key > best[0]:
-                best = (key, i)
-        return [best[1]] if best is not None else None
+            if any(effective_damage(a["damage"], target) >= hp for a in attacks):
+                key = (prize_value(target), -hp)
+                if best is None or key > best[0]:
+                    best = (key, i)
+            elif (
+                lookahead
+                and target.id in IONO_THREATS
+                and energy_count(target) >= 2
+                and effective_damage(bestdmg, target) * 2 >= hp
+            ):
+                key = (energy_count(target), -hp)
+                if alt is None or key > alt[0]:
+                    alt = (key, i)
+        if best is not None:
+            return [best[1]]
+        return [alt[1]] if alt is not None else None
 
     return None
 
