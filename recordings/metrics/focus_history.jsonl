@@ -225,3 +225,4 @@
 {"ts": "2026-07-31T00:00:38.595213+00:00", "cycle": 41, "iono_wr": 42.5, "majkel_wr": 90.0, "flg_wr": 97.5, "dual_overall": 94.2, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
 {"ts": "2026-07-31T00:01:00.344769+00:00", "cycle": 42, "iono_wr": 42.5, "majkel_wr": 85.0, "flg_wr": 87.5, "dual_overall": 94.2, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
 {"ts": "2026-07-31T00:01:22.030454+00:00", "cycle": 43, "iono_wr": 60.0, "majkel_wr": 90.0, "flg_wr": 82.5, "dual_overall": 89.2, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
+{"ts": "2026-07-31T00:01:44.682798+00:00", "cycle": 44, "iono_wr": 57.5, "majkel_wr": 86.7, "flg_wr": 92.5, "dual_overall": 94.2, "ok": true, "iono_rc": 0, "majkel_rc": 0, "flg_rc": 0, "dual_rc": 0}
