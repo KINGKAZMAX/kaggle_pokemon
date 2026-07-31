@@ -61,6 +61,60 @@ while True:
 
 
 ## Auto-submit log
+### Auto-submit 2026-07-31T08:20:08
+- file: `E:\PTCG_AI_Battle_Challenge\kaggle_pokemon\dist\candidates\arch_v5_r7.tar.gz`
+- status: **SKIPPED_DIRECTOR_GATE**
+- message: Strongest reroll #3: Archaludon v5 R7 historical champion ref 54083197 mu 1196.1
+- local_gate: 85.4
+- strength_note: User-directed strongest-score reroll; verified SHA256 651686cde25100aacb1cd86c3094ac072c97f088cdaf3581c10f2483424c1154
+- submits_today: 2/5 (board keeps latest 2)
+- api_output: ```iono 50.625 < 55.0; crustle_min 83.3375 < 89.0```
+
+### Auto-submit 2026-07-31T08:17:20
+- file: `E:\PTCG_AI_Battle_Challenge\kaggle_pokemon\dist\candidates\arch_v5_r7.tar.gz`
+- status: **SKIPPED_DIRECTOR_GATE**
+- message: SSOT guard self-test - must not submit
+- local_gate: 95.0
+- strength_note: read-only policy guard test
+- submits_today: 2/5 (board keeps latest 2)
+- api_output: ```iono 49.375 < 55.0; crustle_min 84.175 < 89.0```
+
+### Auto-submit 2026-07-31T08:07:13
+- file: `dist\candidates\arch_v5_r7.tar.gz`
+- status: **OK**
+- message: Final lock-in #2: Archaludon v5 R7 historical champion ref 54083197 mu 1196.1
+- local_gate: 85.4
+- strength_note: User-directed final lock-in of verified historical champion; SHA256 651686cde25100aacb1cd86c3094ac072c97f088cdaf3581c10f2483424c1154
+- submits_today: 2/5 (board keeps latest 2)
+- api_output: ```3 submissions remaining today.
+Successfully submitted to The Pokémon Company - PTCG AI Battle Challenge Simulation
+  0%|          | 0.00/1.89M [00:00<?, ?B/s]
+  1%|          | 16.0k/1.89M [00:00<00:58, 33.4kB/s]
+ 16%|█▌        | 304k/1.89M [00:00<00:03, 462kB/s]  
+ 19%|█▉        | 368k/1.89M [00:00<00:03, 448kB/s]
+ 22%|██▏       | 432k/1.89M [00:01<00:03, 437kB/s]
+ 37%|███▋      | 720k/1.89M [00:01<00:01, 835kB/s]
+ 62%|██████▏   | 1.17M/1.89M [00:01<00:00, 1.48MB/s]
+100%|██████████| 1.89M/1.89M ```
+
+### Auto-submit 2026-07-31T08:07:04
+- file: `dist\candidates\arch_v5_r7.tar.gz`
+- status: **OK**
+- message: Final lock-in #1: Archaludon v5 R7 historical champion ref 54083197 mu 1196.1
+- local_gate: 85.4
+- strength_note: User-directed final lock-in of verified historical champion; SHA256 651686cde25100aacb1cd86c3094ac072c97f088cdaf3581c10f2483424c1154
+- submits_today: 1/5 (board keeps latest 2)
+- api_output: ```4 submissions remaining today.
+Successfully submitted to The Pokémon Company - PTCG AI Battle Challenge Simulation
+  0%|          | 0.00/1.89M [00:00<?, ?B/s]
+  1%|          | 16.0k/1.89M [00:00<00:33, 58.2kB/s]
+ 35%|███▍      | 672k/1.89M [00:00<00:00, 1.93MB/s] 
+ 48%|████▊     | 928k/1.89M [00:00<00:00, 1.33MB/s]
+ 60%|██████    | 1.14M/1.89M [00:00<00:00, 1.41MB/s]
+ 87%|████████▋ | 1.64M/1.89M [00:01<00:00, 1.93MB/s]
+100%|██████████| 1.89M/1.89M [00:01<00:00, 1.12MB/s]
+```
+
 ### Auto-submit 2026-07-31T07:28:28
 - file: `E:\PTCG_AI_Battle_Challenge\kaggle_pokemon\dist\candidates\arch_v5_r7.tar.gz`
 - status: **SKIPPED_DAILY_CAP**

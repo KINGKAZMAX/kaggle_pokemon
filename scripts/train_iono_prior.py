@@ -65,7 +65,7 @@ def load_dataset(data_dir: Path, max_options: int) -> dict:
     masks: list[list[float]] = []
     picks: list[int] = []
     labels: list[float] = []
-    skipped_multi = skipped_wide = skipped_draw = 0
+    skipped_multi = skipped_wide = skipped_draw = skipped_schema = 0
 
     for fp in files:
         with fp.open(encoding="utf-8") as f:
@@ -76,6 +76,9 @@ def load_dataset(data_dir: Path, max_options: int) -> dict:
                 try:
                     rec = json.loads(line)
                 except json.JSONDecodeError:
+                    continue
+                if rec.get("schema_version") != 2:
+                    skipped_schema += 1
                     continue
                 label = rec.get("label", -1)
                 if label not in (0, 1):
@@ -114,7 +117,15 @@ def load_dataset(data_dir: Path, max_options: int) -> dict:
           f"(state_dim={ds['state'].shape[1]} option_dim={ds['options'].shape[2]} K={max_options})")
     print(f"[data] win-decisions={int(ds['label'].sum())} "
           f"loss-decisions={int((1 - ds['label']).sum())} "
-          f"skipped: multi={skipped_multi} wide={skipped_wide} draw_games={skipped_draw}")
+          f"skipped: schema={skipped_schema} multi={skipped_multi} "
+          f"wide={skipped_wide} draw_games={skipped_draw}")
+    varying_state = int((ds["state"].std(0) > 1e-6).sum())
+    card_id_col = ds["options"][..., -4]
+    if varying_state < 8 or float(card_id_col.std()) <= 1e-6:
+        raise SystemExit(
+            "degenerate Iono features: collector schema/field mapping is invalid "
+            f"(varying_state={varying_state}, option_card_id_std={float(card_id_col.std()):.6g})"
+        )
     return ds
 
 
@@ -162,7 +173,7 @@ class IonoPrior(nn.Module):
 
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--data", default="episodes/iono_bc")
+    ap.add_argument("--data", default="episodes/iono_bc_v2")
     ap.add_argument("--out", default="artifacts")
     ap.add_argument("--device", default="cuda", choices=("cuda", "cpu", "auto"))
     ap.add_argument("--epochs", type=int, default=30)

@@ -48,7 +48,14 @@ for p in (str(ENGINE_DIR), str(ROOT)):
         sys.path.insert(0, p)
 
 from cg import game  # noqa: E402
-from cg.api import OptionType, SelectContext, to_observation_class  # noqa: E402
+from cg.api import (  # noqa: E402
+    AreaType,
+    CardType,
+    OptionType,
+    SelectContext,
+    all_card_data,
+    to_observation_class,
+)
 from cg.sim import Battle, lib  # noqa: E402
 
 from eval.field_registry import load_registry, opponent_meta, resolve_deck_path  # noqa: E402
@@ -68,18 +75,10 @@ CINDERACE = 666
 RELICANTH = 57
 IONO_THREATS = {269, 271}  # Bellibolt ex / Kilowattrel
 
-OPTION_TYPES = [
-    OptionType.PLAY,
-    OptionType.ATTACH,
-    OptionType.EVOLVE,
-    OptionType.ABILITY,
-    OptionType.RETREAT,
-    OptionType.ATTACK,
-    OptionType.END,
-    OptionType.CARD,
-    OptionType.ENERGY,
-]
+SCHEMA_VERSION = 2
+OPTION_TYPES = list(OptionType)
 OPTION_TYPE_INDEX = {t: i for i, t in enumerate(OPTION_TYPES)}
+CARD_DB = {c.cardId: c for c in all_card_data()}
 
 STATE_FEATURES = [
     "turn", "my_prize", "opp_prize", "hand", "deck", "discard",
@@ -105,20 +104,64 @@ def _pokemon_features(pkm) -> list[float]:
     """[hp_remaining, damage, energy_count] for a board slot (zeros if empty)."""
     if pkm is None:
         return [0.0, 0.0, 0.0]
-    return [
-        float(_i(getattr(pkm, "hp", 0))),
-        float(_i(getattr(pkm, "damage", 0))),
-        float(len(getattr(pkm, "energies", None) or [])),
-    ]
+    hp = _i(getattr(pkm, "hp", 0))
+    max_hp = _i(getattr(pkm, "maxHp", hp), hp)
+    return [float(hp), float(max(0, max_hp - hp)),
+            float(len(getattr(pkm, "energies", None) or []))]
 
 
 def _side(obs, mine: bool):
     """Return the board side object for hero (mine=True) or opponent."""
-    for attr in (("your", "opponent") if mine else ("opponent", "your")):
-        side = getattr(obs, attr, None)
-        if side is not None:
-            return side
-    return None
+    state = getattr(obs, "current", None)
+    players = getattr(state, "players", None) or []
+    yi = _i(getattr(state, "yourIndex", 0))
+    index = yi if mine else 1 - yi
+    return players[index] if 0 <= index < len(players) else None
+
+
+def _active(side):
+    active = getattr(side, "active", None) or []
+    return active[0] if active else None
+
+
+def _get_card(obs, area, index, player_index):
+    if area is None or index is None or obs.current is None:
+        return None
+    players = obs.current.players or []
+    if not (0 <= player_index < len(players)):
+        return None
+    ps = players[player_index]
+    if area == AreaType.DECK and obs.select and obs.select.deck is not None:
+        cards = obs.select.deck
+    elif area == AreaType.HAND:
+        cards = ps.hand or []
+    elif area == AreaType.DISCARD:
+        cards = ps.discard or []
+    elif area == AreaType.ACTIVE:
+        cards = ps.active or []
+    elif area == AreaType.BENCH:
+        cards = ps.bench or []
+    elif area == AreaType.PRIZE:
+        cards = ps.prize or []
+    elif area == AreaType.STADIUM:
+        cards = obs.current.stadium or []
+    elif area == AreaType.LOOKING:
+        cards = obs.current.looking or []
+    else:
+        return None
+    return cards[index] if 0 <= index < len(cards) else None
+
+
+def _option_card(obs, opt):
+    yi = _i(getattr(obs.current, "yourIndex", 0))
+    pi = opt.playerIndex if opt.playerIndex is not None else yi
+    if opt.type == OptionType.PLAY:
+        return _get_card(obs, AreaType.HAND, opt.index, pi)
+    card = _get_card(obs, opt.area, opt.index, pi)
+    if card is not None:
+        return card
+    card_id = _i(getattr(opt, "cardId", 0))
+    return type("CardRef", (), {"id": card_id})() if card_id else None
 
 
 def state_vector(obs) -> list[float]:
@@ -126,8 +169,8 @@ def state_vector(obs) -> list[float]:
     me = _side(obs, True)
     opp = _side(obs, False)
 
-    act = getattr(me, "active", None) if me is not None else None
-    oact = getattr(opp, "active", None) if opp is not None else None
+    act = _active(me) if me is not None else None
+    oact = _active(opp) if opp is not None else None
     act_hp, act_dmg, act_en = _pokemon_features(act)
     opp_hp, opp_dmg, opp_en = _pokemon_features(oact)
 
@@ -135,15 +178,15 @@ def state_vector(obs) -> list[float]:
     opp_id = _i(getattr(oact, "id", 0)) if oact is not None else 0
 
     ctx = getattr(getattr(obs, "select", None), "context", None)
-    ctx_name = str(getattr(ctx, "name", ctx) or "").upper()
+    ctx_value = _i(ctx, -1)
     n_opts = len(getattr(getattr(obs, "select", None), "option", None) or [])
 
     return [
         float(_i(getattr(getattr(obs, "current", None), "turn", 0))),
         float(len(getattr(me, "prize", None) or [])) if me is not None else 0.0,
         float(len(getattr(opp, "prize", None) or [])) if opp is not None else 0.0,
-        float(len(getattr(me, "hand", None) or [])) if me is not None else 0.0,
-        float(_i(getattr(me, "deck", 0))) if me is not None else 0.0,
+        float(_i(getattr(me, "handCount", 0))) if me is not None else 0.0,
+        float(_i(getattr(me, "deckCount", 0))) if me is not None else 0.0,
         float(len(getattr(me, "discard", None) or [])) if me is not None else 0.0,
         float(len(getattr(me, "bench", None) or [])) if me is not None else 0.0,
         float(len(getattr(opp, "bench", None) or [])) if opp is not None else 0.0,
@@ -154,11 +197,15 @@ def state_vector(obs) -> list[float]:
         float(act_id == RELICANTH),
         float(act is None),
         opp_hp, opp_dmg, opp_en,
-        float(bool(getattr(oact, "ex", False) or getattr(oact, "megaEx", False))) if oact is not None else 0.0,
+        float(bool(getattr(CARD_DB.get(opp_id), "ex", False) or
+                   getattr(CARD_DB.get(opp_id), "megaEx", False))) if oact is not None else 0.0,
         float(opp_id in IONO_THREATS),
-        float(ctx_name == "MAIN"),
-        float(ctx_name.startswith("SETUP")),
-        float(ctx_name in ("SWITCH", "TO_ACTIVE", "TO_BENCH")),
+        float(ctx_value == int(SelectContext.MAIN)),
+        float(ctx_value in (int(SelectContext.SETUP_ACTIVE_POKEMON),
+                            int(SelectContext.SETUP_BENCH_POKEMON))),
+        float(ctx_value in (int(SelectContext.SWITCH),
+                            int(SelectContext.TO_ACTIVE),
+                            int(SelectContext.TO_BENCH))),
         float(n_opts),
     ]
 
@@ -171,23 +218,17 @@ def option_vector(obs, opt) -> list[float]:
     if idx is not None:
         vec[idx] = 1.0
 
-    card_id = 0
-    is_pkm = 0.0
-    is_energy = 0.0
-    try:
-        card = getattr(opt, "card", None)
-        if card is not None:
-            card_id = _i(getattr(card, "id", 0))
-            is_pkm = float(getattr(card, "hp", 0) or 0 > 0)
-            is_energy = float(bool(getattr(card, "energyType", None)))
-    except Exception:
-        pass
+    card = _option_card(obs, opt)
+    card_id = _i(getattr(card, "id", 0)) if card is not None else 0
+    card_data = CARD_DB.get(card_id)
+    card_type = getattr(card_data, "cardType", None)
+    is_pkm = float(card_type == CardType.POKEMON)
+    is_energy = float(card_type in (CardType.BASIC_ENERGY, CardType.SPECIAL_ENERGY))
 
     targets_opp = 0.0
     try:
-        area = getattr(opt, "area", None)
-        area_name = str(getattr(area, "name", area) or "").upper()
-        targets_opp = float("OPPONENT" in area_name)
+        yi = _i(getattr(obs.current, "yourIndex", 0))
+        targets_opp = float(opt.playerIndex is not None and opt.playerIndex != yi)
     except Exception:
         pass
 
@@ -251,7 +292,7 @@ def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--games", type=int, default=200)
     ap.add_argument("--opponent", default="real_iono")
-    ap.add_argument("--out", default="episodes/iono_bc")
+    ap.add_argument("--out", default="episodes/iono_bc_v2")
     ap.add_argument("--hero-deck", default=None)
     ap.add_argument("--losses-only", action="store_true",
                     help="Only keep lost games (oversample the failure mode)")
@@ -314,6 +355,7 @@ def main() -> int:
             if not decisions:
                 continue
             f.write(json.dumps({
+                "schema_version": SCHEMA_VERSION,
                 "game": i,
                 "hero_first": hero_first,
                 "outcome": outcome,
@@ -348,6 +390,7 @@ def main() -> int:
         "games_written": n_games_written,
         "decisions": n_decisions,
         "losses_only": args.losses_only,
+        "schema_version": SCHEMA_VERSION,
         "state_features": STATE_FEATURES,
         "option_features": OPTION_FEATURES,
         "elapsed_s": round(time.time() - t0, 1),

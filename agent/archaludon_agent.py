@@ -691,11 +691,6 @@ def _opp_hammer_seen(obs) -> bool:
     opp = opp_state(obs)
     if any(c and c.id == CRUSHING_HAMMER for c in (opp.discard or [])):
         return True
-    if os.environ.get("ARCH_CRUSTLE_LEVER", "").strip().lower() == "hammer_prior":
-        try:
-            return detect_matchup(obs) == "crustle"
-        except Exception:
-            return False
     return False
 
 
@@ -909,7 +904,7 @@ def apply_overrides(obs, opt, score, reason):
             if opp_act and rh_dmg < opp_act.hp and _opp_has_spiky(opp_act):
                 # Spiky×4 shells (flg/majkel): prefer Boss first, but still RH if
                 # we need tempo (don't stall into deck-out / Hammer denial).
-                if hand_ids(obs) and BOSS in hand_ids(obs) and _crustle_boss_actually_playable(obs):
+                if hand_ids(obs) and BOSS in hand_ids(obs):
                     return 2500, "Crustle: RH into Spiky soft (Boss preferred)"
                 # No Boss: RH is still the only wincon — keep positive
                 return max(score, 7000), "Crustle: RH into Spiky (no Boss)"
@@ -2371,7 +2366,6 @@ def _agent_impl(obs_dict):
         "tomato_md", "tomato+md", "tomato_lethal",
         "tomato_setup", "tomato+setup",
         "tomato_fork", "tomato+fork",
-        "tomato_prior", "learned_prior",
     ):
         use_tomato = _should_use_tomato(obs)
     elif lever in ("tomato_strict", "iono_only"):
@@ -2398,13 +2392,6 @@ def _agent_impl(obs_dict):
                         out = _tomato_lethal_postfilter(obs, out)
                     elif lever_pf in ("tomato_setup", "tomato+setup"):
                         out = _tomato_setup_postfilter(obs, out)
-                    elif lever_pf in ("tomato_prior", "learned_prior"):
-                        try:
-                            if detect_matchup(obs) == "iono":
-                                from agent.iono_prior_policy import choose_with_prior
-                                out = choose_with_prior(obs, out)
-                        except Exception:
-                            pass
                     return out
             except Exception:
                 pass  # fall through to our scorer

@@ -270,6 +270,44 @@ def main() -> int:
         )
         return 0
 
+    # Final enforcement point: every real automatic submission, including a
+    # rollback/reship, must pass the authoritative pooled director gates at the
+    # moment the API call is made. Message text and --force are not gate
+    # exceptions; a user policy change must modify the SSOT explicitly.
+    from director_gate import PRIMARY_ID, evaluate_ship, load_ship_snapshot, log_decision
+
+    snapshot = load_ship_snapshot()
+    verdict = evaluate_ship(
+        snapshot,
+        candidate_id=PRIMARY_ID,
+        submits_today=n,
+    ) if snapshot is not None else None
+    if verdict is None or not verdict.ship:
+        reasons = verdict.reasons if verdict is not None else ["no authoritative pooled snapshot"]
+        print(f"[SKIP] director gates are not green: {'; '.join(reasons)}")
+        if verdict is not None:
+            log_decision(
+                verdict,
+                source="auto_submit",
+                candidate_id=PRIMARY_ID,
+                file=str(path),
+            )
+        entry = {
+            "status": "SKIPPED_DIRECTOR_GATE",
+            "file": str(path),
+            "message": args.message,
+            "local_gate": args.local_gate,
+            "strength_note": args.strength_note,
+            "submitted_at_local": datetime.now().isoformat(timespec="seconds"),
+            "submits_today_after": n,
+            "api_output": "; ".join(reasons),
+        }
+        LOG_PATH.parent.mkdir(parents=True, exist_ok=True)
+        with LOG_PATH.open("a", encoding="utf-8") as f:
+            f.write(json.dumps(entry, ensure_ascii=False) + "\n")
+        append_state_block(entry)
+        return 0
+
     print(
         f"[SUBMIT] {path.name} attempt 1 ({n+1}/{MAX_PER_DAY}) "
         f"[board keeps latest {ACTIVE_ON_BOARD}; strongest-only policy]..."
