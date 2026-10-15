@@ -51,3 +51,8 @@ a-sample-rule-based-agent-mega-lucario-ex-deck.ipynb
 - **Kaggle API token** at `.kaggle/` (gitignored) — used to fetch data and pull episodes.
 - **A machine with Python ≥3.11** for the engine and the episode pull (this sandbox is 3.10 and has
   no Kaggle egress).
+
+
+## 2026-10-15 项目复盘与卡组索引
+
+[中文项目与 Agent 复盘](report/portfolio/2026-10-15/README.md) · [开发过程和证据](report/portfolio/2026-10-15/HISTORY.md) · [同步方式](report/portfolio/2026-10-15/SYNC.md) · [60 槽卡组查看器](report/portfolio/2026-10-15/index.html) · [卡组数据](report/portfolio/2026-10-15/decks.json)。HTML 下载后在浏览器打开；GitHub 文件页本身不执行 HTML。研究卡组不等于本人已提交卡组，历史 μ 不代表当前成绩。

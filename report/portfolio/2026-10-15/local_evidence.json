@@ -1,0 +1,242 @@
+{
+  "audit_date": "2026-10-15",
+  "latest_log_cutoff": "2026-08-09",
+  "git": {
+    "branch": "codex/ptcg-baseline",
+    "commits": 0,
+    "verification": "git log -1 returned fatal: branch does not have any commits yet"
+  },
+  "claims": [
+    {
+      "id": "deployment_v4",
+      "status": "completed_historical_receipt",
+      "source": "artifacts/kaggle_submission_v4_20260729T100051Z.json",
+      "validation": "success",
+      "submission_status": "complete",
+      "stable_submission_id": null,
+      "scope": "first-min platform baseline; not strength"
+    },
+    {
+      "id": "deployment_v5",
+      "status": "completed_historical_receipt",
+      "source": "artifacts/kaggle_submission_v5_20260729T165653Z.json",
+      "validation": "success",
+      "submission_status": "complete",
+      "stable_submission_id": null,
+      "scope": "H1-H3 parity non-Final probe; current active identity unknown"
+    },
+    {
+      "id": "v2_loader",
+      "status": "revoked_not_submitted",
+      "source": "review-stage/CANDIDATE_V2_REVOCATION.md",
+      "failure": "4/4 exact-exec missing __file__"
+    },
+    {
+      "id": "h1_pilot",
+      "status": "completed_negative_promotion",
+      "source": "docs/strategy/2026-07-29-claim-evidence-spine.md",
+      "games_total": 256,
+      "primary_win_rate": 0.421875,
+      "ci95": [
+        0.3125,
+        0.5313
+      ],
+      "seat_gap_pp": 28.13,
+      "scope": "first-min primary; no strength promotion"
+    },
+    {
+      "id": "h1_removal",
+      "status": "historical_provenance_limitation",
+      "source": "artifacts/experiments/EXP-20260729-E01-REPROAUDIT/repro_audit.json",
+      "games": 384,
+      "limitations": [
+        "runner SHA has 62 hex characters",
+        "runner source unavailable",
+        "not causal confirmation"
+      ]
+    },
+    {
+      "id": "ml",
+      "status": "implementation_and_checkpoint_files_exist_metrics_unverified",
+      "files": 8,
+      "total_bytes": 82469728,
+      "limitations": [
+        "no corresponding run receipts/logs found in scoped inspection",
+        "torch missing in source .venv",
+        "no checkpoint deserialization executed",
+        "filenames do not establish steps/games or effectiveness"
+      ]
+    },
+    {
+      "id": "alakazam",
+      "status": "third_party_derived_local_receipt_not_independently_recomputed",
+      "source": "artifacts/submission-alakazam-safe-v1.receipt.json",
+      "upstream_author": "Javier Valenzuela",
+      "upstream_kaggle_script_version": 338590620,
+      "reported_promotion_win_rate": 0.827,
+      "reported_pressure_win_rate": 0.745,
+      "submission_status": "pending_daily_quota_reset",
+      "public_upload_blocker": "contains official native runtime"
+    },
+    {
+      "id": "latest_online",
+      "status": "point_in_time_account_observation_not_local_artifact_attribution",
+      "source": "GOAL.md Loop53-55",
+      "complete_count": 20,
+      "loop53_observed_score": 763.2,
+      "current_authenticated_score": null,
+      "stable_id_active_final_chooser": "unknown"
+    },
+    {
+      "id": "strategy",
+      "status": "internal_draft_not_submitted",
+      "source": "docs/strategy/2026-08-09-internal-claim-to-evidence-draft.md",
+      "platform_progress": "1/4 Complete; Draft/In Progress"
+    },
+    {
+      "id": "controller",
+      "status": "design_preregistration",
+      "source": "docs/strategy/2026-08-09-internal-claim-to-evidence-draft.md",
+      "scope": "fresh-remap controller and residual belief/search not proven implemented in current approved lineage; separate generic prototype code exists"
+    },
+    {
+      "id": "latest_tests",
+      "status": "historical_logged_not_reexecuted_this_audit",
+      "source": "LOOP_LOG.md:3615",
+      "passed_each": 574,
+      "python_versions": [
+        "3.11.15",
+        "3.12.13"
+      ],
+      "scope": "historical pins only; current Data not admitted"
+    }
+  ],
+  "architecture": {
+    "battle_agent": [
+      "deck initial action",
+      "selection contract",
+      "first-min fallback",
+      "H1-H4 bounded rules",
+      "optional model.pt runtime"
+    ],
+    "ml": [
+      "actor-visible tensorization",
+      "deck-conditioned Transformer policy/value",
+      "BC training",
+      "PPO native rollout/update",
+      "hybrid confidence/time-gated search prototype"
+    ],
+    "development_roles": [
+      "lead",
+      "rules",
+      "builder (single production writer)",
+      "evaluator",
+      "auditor"
+    ]
+  },
+  "evidence_files": [
+    {
+      "path": "GOAL.md",
+      "bytes": 124280,
+      "sha256": "41957d10645ef8e99ed1c94ff1618aa895d4870997e8b262f1ed77d4b1499cf5"
+    },
+    {
+      "path": "LOOP_LOG.md",
+      "bytes": 224874,
+      "sha256": "54f12abef4c1f91f1f3f6aa3f5b903c754521505ac2c572e3b15e13271a382dd"
+    },
+    {
+      "path": "pyproject.toml",
+      "bytes": 427,
+      "sha256": "6542dba0712c473a82f618afd15dd778a4bac562a67ce9de51f2b1de15d3ec28"
+    },
+    {
+      "path": "uv.lock",
+      "bytes": 53555,
+      "sha256": "3a620a028ff6e236d2fb2656d93c7b5d40d0468dbfad2522f07e6e6331fceb66"
+    },
+    {
+      "path": "artifacts/kaggle_submission_v4_20260729T100051Z.json",
+      "bytes": 2761,
+      "sha256": "6cbe7308ff906877a53f68b21e462bf6c14864c8e401f3efc281159fd776498c"
+    },
+    {
+      "path": "artifacts/kaggle_submission_v5_20260729T165653Z.json",
+      "bytes": 2664,
+      "sha256": "acfa07c5cbcc206592e725de9faebf3ec44c5bbf0108a51748ec58b5ddd3b584"
+    },
+    {
+      "path": "artifacts/submission-alakazam-safe-v1.receipt.json",
+      "bytes": 2121,
+      "sha256": "23f6177837dade51aa2e016c836b0509088cbba19e776f2afc628c5af04ee126"
+    },
+    {
+      "path": "review-stage/CANDIDATE_V2_REVOCATION.md",
+      "bytes": 1630,
+      "sha256": "8e03211435c588532354200a1153b039e9e5b03592085824f86e0773be21db20"
+    },
+    {
+      "path": "docs/strategy/2026-07-29-claim-evidence-spine.md",
+      "bytes": 10056,
+      "sha256": "2eeb052e59944c0b40cff1fae23ce5648b611dfbd7a930656e23d13558b8fc10"
+    },
+    {
+      "path": "docs/strategy/2026-08-09-internal-claim-to-evidence-draft.md",
+      "bytes": 10483,
+      "sha256": "f5a0f51476352fe0fd5feab9de048c8d31bffd17074046411c7e4dabec417e4e"
+    },
+    {
+      "path": ".claude/ptcg-control/README.md",
+      "bytes": 3810,
+      "sha256": "a82b1a4a1b8d30a46cb3800cad845cee681c04cf9898059e3f8778b18496a990"
+    },
+    {
+      "path": "artifacts/experiments/EXP-20260729-E01-REPROAUDIT/repro_audit.json",
+      "bytes": 12772,
+      "sha256": "4ec341d0eb4907b8f76a7afdf5b195304f7ede7b5195644dd37032d07c4c3a97"
+    }
+  ],
+  "checkpoint_inventory": [
+    {
+      "path": "artifacts/models/bc-public-s20260730-step10000.pt",
+      "bytes": 9053609,
+      "sha256": "ac47f24f4bbb4aed5d2591c5b86853ccf2495ed4c9cd31537c3f273c5328b278"
+    },
+    {
+      "path": "artifacts/models/bc-public-s20260730-step2000.pt",
+      "bytes": 9053549,
+      "sha256": "cc46078ab5ff2cbd097e461dbe80461760a3f3e4b69887290f8973454b0f431c"
+    },
+    {
+      "path": "artifacts/models/bc-public-v2-s20260730-step2000.pt",
+      "bytes": 10725579,
+      "sha256": "78c3909356e7ed25a7132e8668b62445814f1c046490e7c4dc7d558ba4e29ce9"
+    },
+    {
+      "path": "artifacts/models/bc-public-v2-s20260731-step4000.pt",
+      "bytes": 10725643,
+      "sha256": "06a5d4dcb1a5c749a0f6b8d99de35372cafdab279a9c5106460cfa0e69309a51"
+    },
+    {
+      "path": "artifacts/models/bc-public-v2-winnerweighted-s20260731-step2000.pt",
+      "bytes": 10726573,
+      "sha256": "e03728df4089bc343b10b82026128d9f0fb75de485488cee08060ef7d3e0c808"
+    },
+    {
+      "path": "artifacts/models/ppo-probe-s20260731-g100.pt",
+      "bytes": 10728217,
+      "sha256": "a9e327b96cd03f2b28d38d07bbe5b82fc9f232f7dbe9fb050151e06629d7da0b"
+    },
+    {
+      "path": "artifacts/models/ppo-selfplay-s20260731-g1000.pt",
+      "bytes": 10728465,
+      "sha256": "542ce0f87cee0bcf9889055881a58d9f52910a2205a80153105a1ddabd74012e"
+    },
+    {
+      "path": "artifacts/models/ppo-smoke-s20260731-g4.pt",
+      "bytes": 10728093,
+      "sha256": "243c42134b5f2a1fd40dfe79c0ecab9a6e73cb4343fa0fb0ad38bb106a1c88d7"
+    }
+  ],
+  "notice": "Historical local evidence index only. SHA-256 values bind archived files; not independently refreshed platform status or current performance. Raw source receipts/checkpoints remain in the private external archive."
+}

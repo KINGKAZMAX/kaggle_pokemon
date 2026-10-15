@@ -1,3 +1,13 @@
+## 2026-10-15 — Archive verification and evidence-based portfolio sync
+
+- State: B02 local duplicate migrated to external archive after 6,829 regular files (25,384,716,393 bytes) matched SHA-256; original path retained as local symlink. Regenerable caches/environment excluded. This is storage verification, not a game performance measurement.
+- Files changed: README.md, STATE.md and report/portfolio/2026-10-15/ (Chinese history, Agent provenance, 60-slot deck viewer, minimal deck metadata and editable SVG sheets).
+- Measured result: 381 valid remote deck CSVs deduplicated into 103 compositions, plus 8 local compositions kept separately; every displayed deck has exactly 60 cards. No agent code changed, no training, no Kaggle submission or refreshed ladder measurement.
+- Blocker: Figma cloud destination requires the user's team/file selection; import-ready SVGs are prepared, cloud sync is not yet claimed.
+- Single next action: once the user selects the Figma destination, import the same deck snapshot and add the resulting Figma URL to the portfolio index.
+
+---
+
 # STATE — PTCG AI Battle Aggressive Ladder Climb
 
 > **Mode:** NEVER-STOP aggressive parallel loop (rules-locked 2026-07-30)  
