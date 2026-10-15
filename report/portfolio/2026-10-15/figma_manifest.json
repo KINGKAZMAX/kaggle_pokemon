@@ -44,6 +44,11 @@
       "id": "5:3214",
       "name": "07 卡组 · Mac 支线",
       "frames": 8
+    },
+    {
+      "id": "11:2",
+      "name": "08 真实卡牌资产 · 241 张",
+      "frames": 5
     }
   ],
   "decks": [
@@ -722,5 +727,14 @@
   },
   "overviewFrame": "2:2",
   "timelineFrame": "3:3",
-  "agentFrame": "4:3"
+  "agentFrame": "4:3",
+  "visual_version": 2,
+  "real_card_assets": 241,
+  "verified_image_slots": 6660,
+  "palette": {
+    "source": "https://ptcg-abc.pokemon.co.jp/",
+    "primary": "#CCFA00",
+    "blue": "#1039D5",
+    "cyan": "#42F7FB"
+  }
 }

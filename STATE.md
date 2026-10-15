@@ -1,3 +1,14 @@
+## 2026-10-15 — Official palette and real-card visual upgrade
+
+- State: Figma portfolio rebuilt with the competition website palette (#CCFA00, #1039D5, #42F7FB) and real printed card artwork.
+- Verified: 111 decks / 6,660 image slots, exact Card ID order and image hashes; 241 unique assets; cover, timeline, Agent, deck and library screenshots inspected. Figma now has 9 pages.
+- Mapping: original catalog IDs 19/20 retain their IDs; artwork uses POR 88/87 respectively, matched by name and effect.
+- Changed: portfolio viewer, artwork source manifest, Figma manifest and documentation; existing Agent code unchanged.
+- Blockers: none. HTML artwork needs network; text index works offline.
+- Next action: review the updated Figma portfolio; no experiment or competition submission scheduled.
+
+---
+
 ## 2026-10-15 — Figma portfolio sync complete
 
 - State: user selected 設計比賽規劃; created the requested PTCG review file and synchronized the same deck snapshot.

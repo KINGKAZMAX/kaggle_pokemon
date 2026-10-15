@@ -54,3 +54,13 @@ flowchart TD
 ## 使用与数据
 
 此展示页可作为静态文件查看。运行对战源码还需要合法获取官方Competition Data与native engine，Python≥3.11；参见[原仓库依赖](https://github.com/KINGKAZMAX/kaggle_pokemon/blob/main/requirements.txt)和[运行文档](https://github.com/KINGKAZMAX/kaggle_pokemon/blob/main/README.md)。原生引擎、完整卡表、原始replay、密钥和未审查权重不随这个回顾包发布。
+
+
+## 2026-10-15 视觉升级 v2
+
+采用[比赛官网](https://ptcg-abc.pokemon.co.jp/)的荧光黄绿 `#CCFA00`、蓝 `#1039D5`、青 `#42F7FB` 与黑白配色。Figma 共 9 页：封面、时间线、Agent 战术、111 套卡组及 241 张真实卡牌资产库。6,660 个卡位逐张核对图片哈希、Card ID 和原始顺序通过。
+
+241 张图按系列与编号匹配：204 张来自 Pokémon 官方图片 CDN，其余 37 张使用公开卡牌数据所链接的图源。来源、SHA-256 和编号映射见 [card_art_sources.json](card_art_sources.json)。ID 19/20 的原目录收藏编号互换，现按名称与效果匹配 POR 88 / POR 87；原比赛 ID、卡组数量与顺序保留。
+
+HTML 查看器同步更新真实卡图与配色；加载卡图需要网络，文字与索引可离线查看。Figma 已嵌入图片，不依赖查看者重新下载源站。`figma-svg/` 是旧版文字导入备份，最新视觉以 Figma 和 HTML 为准。卡图 © Pokémon / Nintendo / Creatures / GAME FREAK；本文件为个人比赛研究复盘。
+

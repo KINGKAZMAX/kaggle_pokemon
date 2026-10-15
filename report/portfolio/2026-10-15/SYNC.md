@@ -2,13 +2,13 @@
 
 外盘迁移、GitHub 公开展示包与 Figma 云端写入已完成。
 
-[Figma：PTCG 比赛复盘与卡牌战术](https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=2-2) 位于「設計比賽規劃」团队。8 页包括总览、时间线、Agent/战术和全部卡组；111 组各 60 张，合计 6,660 个可编辑卡槽，逐张名称与顺序核对通过。页面元数据见 [figma_manifest.json](figma_manifest.json)。
+[Figma：PTCG 比赛复盘与卡牌战术](https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=2-2) 位于「設計比賽規劃」团队。9 页包括总览、时间线、Agent/战术和全部卡组；111 组各 60 张，合计 6,660 个可编辑卡槽，逐张名称与顺序核对通过。页面元数据见 [figma_manifest.json](figma_manifest.json)。
 
 | 位置 | 保存什么 | 完成依据 |
 |---|---|---|
 | 外盘 | 源目录、受限大数据/原生引擎/原提交包、manifest与hash、未公开模型 | 文件数量/大小/hash验证与迁移报告 |
 | GitHub现有仓库 | 本人可再分发代码、脱敏聚合、卡组展示、历史复盘和来源 | 实际推送commit与在线读取；禁止用本地文件存在代替上传成功 |
-| Figma | 时间线、Agent架构、角色协作、部署修复、负结果与证据卡 | 已创建并检查 8 页，逐张名称、顺序、数量均一致 |
+| Figma | 时间线、Agent架构、角色协作、部署修复、负结果与证据卡 | 已创建并检查 9 页，逐张名称、顺序、数量均一致 |
 
 公开展示入口为[index.html](index.html)，结构化数据为[decks.json](decks.json)，过程为[HISTORY](HISTORY.md)。此次文档整理不重跑比赛、训练、自动提交或旧never-stop循环；既有仓库历史也不由新的Mac导入覆盖。
 
@@ -25,3 +25,13 @@ GitHub通常会警告超过50MiB的普通Git文件并阻止超过100MiB文件；
 - [dogahwisdom/pokemon-tcg-ai-battle-strategy](https://github.com/dogahwisdom/pokemon-tcg-ai-battle-strategy)：保留为检索到的参考入口。本次网页访问失败、GitHub API返回404，未读取到内容，不推断其架构、成绩、许可或质量。
 
 以上参考核验日为2026-10-15。展示中的本人历史事实仍以[现有Agent catalog](https://github.com/KINGKAZMAX/kaggle_pokemon/blob/main/eval/AGENT_CATALOG_FULL.md)、[scoreboard](https://github.com/KINGKAZMAX/kaggle_pokemon/blob/main/report/LADDER_BEST_SO_FAR.md)、[研究brief](https://github.com/KINGKAZMAX/kaggle_pokemon/blob/main/report/RESEARCH_AND_DECISION_BRIEF.md)及本地manifest/receipt为依据。
+
+
+## 2026-10-15 视觉升级 v2
+
+采用[比赛官网](https://ptcg-abc.pokemon.co.jp/)的荧光黄绿 `#CCFA00`、蓝 `#1039D5`、青 `#42F7FB` 与黑白配色。Figma 共 9 页：封面、时间线、Agent 战术、111 套卡组及 241 张真实卡牌资产库。6,660 个卡位逐张核对图片哈希、Card ID 和原始顺序通过。
+
+241 张图按系列与编号匹配：204 张来自 Pokémon 官方图片 CDN，其余 37 张使用公开卡牌数据所链接的图源。来源、SHA-256 和编号映射见 [card_art_sources.json](card_art_sources.json)。ID 19/20 的原目录收藏编号互换，现按名称与效果匹配 POR 88 / POR 87；原比赛 ID、卡组数量与顺序保留。
+
+HTML 查看器同步更新真实卡图与配色；加载卡图需要网络，文字与索引可离线查看。Figma 已嵌入图片，不依赖查看者重新下载源站。`figma-svg/` 是旧版文字导入备份，最新视觉以 Figma 和 HTML 为准。卡图 © Pokémon / Nintendo / Creatures / GAME FREAK；本文件为个人比赛研究复盘。
+
