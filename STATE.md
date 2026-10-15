@@ -1,3 +1,13 @@
+## 2026-10-15 — Illustrated repository README
+
+- State: repository landing page rebuilt as a detailed Chinese project portfolio, using the approved competition palette and real printed card artwork.
+- Changed: README.md and 23 repository-hosted images under report/portfolio/2026-10-15/readme-assets/; prior Agent code unchanged.
+- Verified: 5 complete 60-card example tables from decks.json, image paths and Markdown rendering, relative repository links, source attribution and historical score wording.
+- Blockers: none for README publication.
+- Next action: review the repository home page and follow the linked Figma / full deck archive.
+
+---
+
 ## 2026-10-15 — Official palette and real-card visual upgrade
 
 - State: Figma portfolio rebuilt with the competition website palette (#CCFA00, #1039D5, #42F7FB) and real printed card artwork.
