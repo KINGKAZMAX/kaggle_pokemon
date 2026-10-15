@@ -1,3 +1,15 @@
+## 2026-10-15 — Champion and official Top10 illustrated research archive
+
+- State: verified Simulation final Top10 and Strategy official top-eight awards independently; Luca is first in both. No second-round champion result inferred.
+- Changed: README landing section, top10/ archive, source readers and image assets, Figma metadata. Figma adds three pages: dual standings, ten editable team profiles, and three champion 60-card lists.
+- Evidence: all ten source writeups read and their MIT statements checked; ten full-text readers with 83 original figure references; three champion lists each sum to 60. Distinguish two final Dragapult submissions from the Hydrapple candidate.
+- Release status: champion repository currently has figures/supplements, code promised after round two; third/ninth repositories accessible; seventh link returned 404. Never treat missing source as obtained.
+- Validation: official ranks/scores, 10 profiles, 20 core-card images, Noto Sans SC styled segments, no collapsed/overflowing text, three composition screenshots and all local document links checked.
+- Blockers: no blocker to documentation sync; unreleased external code remains clearly labelled.
+- Next action: review the linked Top10 archive and Figma pages; no training, installation or Kaggle submission is scheduled.
+
+---
+
 ## 2026-10-15 — Illustrated repository README
 
 - State: repository landing page rebuilt as a detailed Chinese project portfolio, using the approved competition palette and real printed card artwork.

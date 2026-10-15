@@ -8,9 +8,41 @@
 
 ![PTCG 比赛复盘封面：铝钢龙、铝钢桥龙 ex、闪焰王牌、胡地与盖欧卡真实卡图](report/portfolio/2026-10-15/readme-assets/cover.png)
 
-**111 套研究卡组 · 241 张独立卡牌 · 6,660 个逐张卡图槽位 · 9 页 Figma 档案**
+**111 套研究卡组 · 241 张独立卡牌 · 6,660 个逐张卡图槽位 · 12 页 Figma 档案**
 
 </div>
+
+## 新增：冠军与 Top 10 图文方案档案
+
+已核实 **Simulation 最终前十名**与 **Strategy 官方获奖前八名**。冠军 Luca 同时获得两赛道第一；两榜分别列出。核实日期：2026-10-15。
+
+[打开完整图文研究档案](report/portfolio/2026-10-15/top10/README.md) · [Figma 冠军与双榜](https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=27-2) · [十队完整原文与83张原图入口](report/portfolio/2026-10-15/top10/sources.json)
+
+| Simulation | 团队 | 最终分数 | Strategy | 方案与核心牌组 |
+|---:|---|---:|---:|---|
+| 1 | [Luca](report/portfolio/2026-10-15/top10/README.md#team-1) | 1398.2 | 1 | Dragapult ex ×2；Hydrapple ex 候选 |
+| 2 | [palsystem](report/portfolio/2026-10-15/top10/README.md#team-2) | 1297.8 | 3 | Crustle / Mega Kangaskhan ex |
+| 3 | [Unown Gradiant](report/portfolio/2026-10-15/top10/README.md#team-3) | 1280.5 | 2 | Hydrapple ex；Crustle |
+| 4 | [flg](report/portfolio/2026-10-15/top10/README.md#team-4) | 1266.1 | 4 | Dragapult ex / Crushing Hammer |
+| 5 | [Petit Canard](report/portfolio/2026-10-15/top10/README.md#team-5) | 1257.3 | 8 | Slowking / Mega Kangaskhan ex |
+| 6 | [KawattaTaido](report/portfolio/2026-10-15/top10/README.md#team-6) | 1229.5 | 6 | Slowking；Dragapult ex / Dusknoir |
+| 7 | [LumenLiquidity](report/portfolio/2026-10-15/top10/README.md#team-7) | 1226.6 | 5 | Dragapult ex / Blaziken ex |
+| 8 | [やる気元気ミワハルキ](report/portfolio/2026-10-15/top10/README.md#team-8) | 1214.2 | 7 | Dragapult ex / Moltres |
+| 9 | [Rmy](report/portfolio/2026-10-15/top10/README.md#team-9) | 1200.0 | — | Teal Mask Ogerpon ex / Hydrapple ex |
+| 10 | [Azat Akhtyamov](report/portfolio/2026-10-15/top10/README.md#team-10) | 1195.3 | — | Dragapult ex |
+
+冠军重点：**2.24M Transformer、四阶段 PPO、原型平衡采样、对战矩阵选牌与固定牌组专家**。档案包含十队逐队架构、训练、战术、实验限制、原文 / 原图与公开代码状态，以及冠军两份最终 Dragapult 提交和一份 Hydrapple 备选的精确60张数量表。
+
+<details>
+<summary><strong>展开冠军与双榜图文总览</strong></summary>
+
+![官方双榜与冠军方案总览](report/portfolio/2026-10-15/top10/assets/standings.png)
+
+</details>
+
+这是他人公开方案的署名研究档案；我的参赛经历与结果继续列在下方。未公开的代码和权重不会用相似项目代替。十篇报告页面均声明MIT，阅读副本保留原作者、原图链接与许可；卡图权利仍归原权利人。
+
+
 
 这是我参与 **PTCG AI Battle Challenge** 的项目工作区与研究档案。项目围绕一个问题展开：在看不到对手手牌和牌库顺序的宝可梦卡牌对局中，怎样让 Agent 稳定地返回合法动作，再通过规则、搜索、牌组协同和真实对局评测改善决策？
 

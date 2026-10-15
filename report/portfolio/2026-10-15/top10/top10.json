@@ -1,0 +1,716 @@
+{
+  "snapshot": "2026-10-15",
+  "scope": "Simulation 最终Top10 + Strategy官方前8对照；不是第二轮最终冠军结果",
+  "leaderboard_source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle/leaderboard",
+  "strategy_source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/hackathon-winners",
+  "teams": [
+    {
+      "rank": 1,
+      "team": "Luca",
+      "score": 1398.2,
+      "members": [
+        {
+          "text": "Luca's profile",
+          "url": "https://www.kaggle.com/yijiey"
+        }
+      ],
+      "strategy_rank": 1,
+      "title": "Aim to Be a Pokémon Master",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/new-writeup-1784257142000",
+      "model": "2.24M Transformer / JAX PPO",
+      "deck": "Dragapult ex ×2；Hydrapple ex 候选",
+      "core_ids": [
+        "121",
+        "31"
+      ],
+      "flow": [
+        "广泛自博弈",
+        "原型代表卡组",
+        "聚焦龙 / 草系",
+        "固定牌组专家"
+      ],
+      "method": "三层 Transformer 评分合法选项；显式跟踪公开历史，并推断对手卡组与手牌。按原型 / 家族平衡采样，避免高频牌组占据训练。",
+      "training": "四阶段逐步缩小卡组范围；C++ 批量引擎配合 JAX / DDP。4×RTX5090 测得约 40k–60k 决策样本 / 秒，不能与完整对局 / 秒混用。",
+      "tactics": "本地竞技场比较 checkpoint × deck；在原型内、跨原型矩阵上选牌，再试少量换卡。准备两个 Dragapult 专家与一个 Hydrapple 专家，最后提交两个 Dragapult。",
+      "limits": "f38fb5 最终1398.2；917977 最终1291.1。Chi-Yu 与 Jamming Tower 交互涉及主办方确认的模拟器击倒结算差异，应按当时引擎理解。",
+      "lesson": "可学习：平衡采样 → 对战矩阵 → 专门化 → 少量换卡验证。冠军训练代码尚未公开；仓库提供图表和补充表格，承诺第二轮后发布代码。",
+      "code": "https://github.com/yijieyuan/kaggle-pokemon-tcg",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 2,
+      "team": "palsystem",
+      "score": 1297.8,
+      "members": [
+        {
+          "text": "ktr's profile",
+          "url": "https://www.kaggle.com/kcotton21"
+        },
+        {
+          "text": "Ebi's profile",
+          "url": "https://www.kaggle.com/ebinan92"
+        }
+      ],
+      "strategy_rank": 3,
+      "title": "2nd Place in Simulation: From 3,341 Decks to One Specialist",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/new-writeup-1788449799640",
+      "model": "2.4M policy / 双阶段 PPO",
+      "deck": "Crustle / Mega Kangaskhan ex",
+      "core_ids": [
+        "345",
+        "756"
+      ],
+      "flow": [
+        "3,341 去重卡组",
+        "12B步通才 PPO",
+        "针对头部选牌",
+        "4.2B步专家 PPO"
+      ],
+      "method": "从随机权重训练通才，训练主线无模仿学习预热；Transformer 结合状态、卡组与合法选项。受限引擎探测提供动作后果和后续可用动作。",
+      "training": "公开回放构成3,341套卡组；Phase1约12B环境步，Phase2约4.2B步。训练 critic 可用额外隐信息，部署 actor 不接收它。",
+      "tactics": "用相同通才比较候选与领先队伍牌组，最终选 Crustle / Mega Kangaskhan。防御、抽牌与治疗争取拖空对手牌库；non-ex 攻击手是主要风险。",
+      "limits": "提交使用 depth-3 选择步骤探测 + 后续检查，再 greedy actor 选择；这里深度是选择步骤，不是3个完整回合。未采用较慢且收益不稳定的 critic 重排 / beam search。",
+      "lesson": "可学习：受限探测作为特征，与部署时的在线 MCTS 分开；本地胜率与公开胜率有偏差。报告未附可核实的团队代码仓库。",
+      "code": "",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 3,
+      "team": "Unown Gradiant",
+      "score": 1280.5,
+      "members": [
+        {
+          "text": "Dipam Chakraborty's profile",
+          "url": "https://www.kaggle.com/dipamc77"
+        }
+      ],
+      "strategy_rank": 2,
+      "title": "Solution writeup - Team Unown Gradiant - All Decks on Hand",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/team-unown-gradiant-solution-all-decks-on-hand",
+      "model": "4.4M pointer attention / PPO",
+      "deck": "Hydrapple ex；Crustle",
+      "core_ids": [
+        "150",
+        "345"
+      ],
+      "flow": [
+        "约500卡组自博弈",
+        "6B步单策略",
+        "卡组对战矩阵",
+        "博弈式双卡组选择"
+      ],
+      "method": "单一无递归记忆策略搭配外部信息 tracker；四层八头 pointer attention，逐个选择多选动作。卡牌文本嵌入经 PCA，与规则和状态特征结合。",
+      "training": "原生 C/CUDA PufferLib 提升训练吞吐；报告约6B步、8×3090、约四天。训练 oracle critic 使用隐信息，actor保持可见信息边界。",
+      "tactics": "同一策略估计 deck-vs-deck 矩阵，改变预期对手混合做敏感性检查。最终选择 Hydrapple 与 Crustle；LLM 提案经对局和审查后再加入牌池。",
+      "limits": "报告暴露已知顶牌 tracker 缺口；MCTS 收益在更强模型上消失。最终部署 argmax policy；公开代码仓库含训练器、deck lab 与精确提交文件。",
+      "lesson": "可学习：稳定通才 + 显式信息追踪 + 可检验选牌。报告约500套的训练口径与代码发布版616套牌池分别记录。",
+      "code": "https://github.com/dipamc/kaggle-ptcg-ai-battle",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 4,
+      "team": "flg",
+      "score": 1266.1,
+      "members": [
+        {
+          "text": "flg's profile",
+          "url": "https://www.kaggle.com/ferdinandlimburg"
+        }
+      ],
+      "strategy_rank": 4,
+      "title": "[4th] A Simple Learning Loop for a Complex Card Game",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/new-writeup-1782463123738",
+      "model": "Transformer / 同步 PPO",
+      "deck": "Dragapult ex / Crushing Hammer",
+      "core_ids": [
+        "121",
+        "343"
+      ],
+      "flow": [
+        "广泛牌池",
+        "补全381覆盖牌组",
+        "按预期环境调整",
+        "Slowking 专项微调"
+      ],
+      "method": "按实体聚合卡片、能量、工具与状态；确定性 tracker 携带已知顶牌、奖赏区与公开对手信息。STOP处理可选多选动作。",
+      "training": "同步自博弈 PPO；终局奖励、EMA与保留冠军约束漂移。报告四周、主要8×RTX5090，共16B样本，其中12B Dragapult、4B其他。",
+      "tactics": "覆盖牌组补充罕见机制；约1,000份Slowking回放的短BC教学帮助自博弈对手掌握顶牌连招，再训练专项策略，观察到对方公开Slowking组合后切换。",
+      "limits": "最终两份均为Dragapult构成。四张Crushing Hammer延缓能量；损伤分布和干扰创造多奖赏回合。覆盖与训练分配的结论来自其特定实验。",
+      "lesson": "可学习：先让对手真正会玩，再训练克制它；处理未知卡覆盖。报告未附团队代码发布链接，参数量未在已查正文中明确给出。",
+      "code": "",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 5,
+      "team": "Petit Canard",
+      "score": 1257.3,
+      "members": [
+        {
+          "text": "Petit Canard's profile",
+          "url": "https://www.kaggle.com/petitcanard"
+        }
+      ],
+      "strategy_rank": 8,
+      "title": "The Deck Is Half the Game",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/new-writeup-1787069823045",
+      "model": "BC → League PPO → Gumbel search",
+      "deck": "Slowking / Mega Kangaskhan ex",
+      "core_ids": [
+        "163",
+        "756"
+      ],
+      "flow": [
+        "模仿预热",
+        "League PPO",
+        "单牌组专家",
+        "对位专家 + 搜索"
+      ],
+      "method": "显式恢复日志中遗漏的效果，并把进化潜力纳入特征；多选自回归。通才、牌组专家与十二类对位专家逐层训练。",
+      "training": "作者报告Slowking固定评测由47.6%至72.1%，对位专门化再约+3.5pp；搜索约+6.4pp。均为作者本地口径，不是公开榜通用胜率。",
+      "tactics": "Slowking通过准备顶牌复制攻击；Codebreaking + Mega Kangaskhan抓到精确资源，优先提高展开一致性，权衡tech卡与启动资源。",
+      "limits": "Gumbel 搜索按隐信息重新设计：填补对手未知区，避免跨信息集机械取负价值，并处理按决策步数截断的偏差。",
+      "lesson": "可学习：搜索针对编码缺失与具体致胜线；报告也指出通才对手偏弱与选牌过早。未附可核实团队代码仓库。",
+      "code": "",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 6,
+      "team": "KawattaTaido",
+      "score": 1229.5,
+      "members": [
+        {
+          "text": "KawattaTaido's profile",
+          "url": "https://www.kaggle.com/kawattataido"
+        }
+      ],
+      "strategy_rank": 6,
+      "title": "Seek Inspiration, Not Imitation",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/new-writeup-1787373273295",
+      "model": "0.73M Transformer / Bayesian belief",
+      "deck": "Slowking；Dragapult ex / Dusknoir",
+      "core_ids": [
+        "163",
+        "133"
+      ],
+      "flow": [
+        "原型内自博弈",
+        "对位微调",
+        "Bayesian隐区估计",
+        "按后验切换策略"
+      ],
+      "method": "策略无回放模仿预热；回放用于牌组、环境统计和动作证据模型。先训练原型，再针对对手类别训练并按后验混合 / 切换策略。",
+      "training": "每张卡的预期隐藏副本数作为输入；贝叶斯原型后验与隐区质量流跟踪结合。伤害 / KO 特征显式计算，多阶段效果按实际选择顺序更新。",
+      "tactics": "Slowking复制攻击与Dragapult / Dusknoir形成不同策略线；同一60张牌会按对手改变构建与资源分配，不能只凭卡组名推断打法。",
+      "limits": "作者A/B报告对位切换约+12–14pp、隐区估计+4.9pp；另用小型AND/OR必胜搜索。作者也报告若干value lookahead方案无效。",
+      "lesson": "可学习：把“知道什么”和“采取什么策略”共同设计；统计来自特定固定对手测试。未附可核实团队代码仓库。",
+      "code": "",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 7,
+      "team": "LumenLiquidity",
+      "score": 1226.6,
+      "members": [
+        {
+          "text": "Giovanni Baldon's profile",
+          "url": "https://www.kaggle.com/giovannibaldon"
+        },
+        {
+          "text": "Squapale's profile",
+          "url": "https://www.kaggle.com/pasqualemadd4loni"
+        }
+      ],
+      "strategy_rank": 5,
+      "title": "7th Place Solution for the PTCG AI Battle Challenge Simulation Competition",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/7th-place-solution-for-the-ptcg-ai-battle-challeng",
+      "model": "10.7M Transformer + GRU / League RL",
+      "deck": "Dragapult ex / Blaziken ex",
+      "core_ids": [
+        "121",
+        "326"
+      ],
+      "flow": [
+        "卡牌文本与效果编码",
+        "冻结对手联盟",
+        "训练克制主策略的对手",
+        "greedy + 致胜检查"
+      ],
+      "method": "编码卡牌文本、效果、属性与实时状态；GRU维持belief，pointer对合法动作打分。没有学习的卡牌ID专属参数。",
+      "training": "摘要称70+冻结对手，训练章节描述联盟扩展；使用V-trace / UPGO与PPO clipping。最初规则机器人预热，与后续放弃回放克隆分别记录。",
+      "tactics": "Dragapult负责抽牌与伤害分布，Blaziken再附能量应对干扰与草系；Chi-Yu处理Crustle，Munkidori转伤，Lillie’s Clefairy提供额外对策。",
+      "limits": "确定性致胜搜索覆盖policy，少量dominated-action masks去除明显无效选项。代码链接核实时返回404，不能视为已获得源码。",
+      "lesson": "可学习：暴露模型缺失的战术量，用针对性对手逼出答案；精确60张名称数量表已从公开报告整理。",
+      "code": "https://github.com/Z3rox-dev/pokemon-tcg-7th-place-transformer-agent",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 8,
+      "team": "やる気元気ミワハルキ",
+      "score": 1214.2,
+      "members": [
+        {
+          "text": "Kohei's profile",
+          "url": "https://www.kaggle.com/confirm"
+        },
+        {
+          "text": "masayoshi's profile",
+          "url": "https://www.kaggle.com/masayoshi64"
+        },
+        {
+          "text": "tomo0608's profile",
+          "url": "https://www.kaggle.com/tomo0608"
+        },
+        {
+          "text": "c-number's profile",
+          "url": "https://www.kaggle.com/cnumber"
+        },
+        {
+          "text": "HARUKI MIWA's profile",
+          "url": "https://www.kaggle.com/harukimiwa"
+        }
+      ],
+      "strategy_rank": 7,
+      "title": "[8th Place Solution] Yaruki Genki Miwa Haruki: Generalist-to-Specialist PPO",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/8th-place-solution-yaruki-genki-miwa-haruki",
+      "model": "3.23M Transformer / BC + PPO",
+      "deck": "Dragapult ex / Moltres",
+      "core_ids": [
+        "121",
+        "66"
+      ],
+      "flow": [
+        "BC学基本动作",
+        "273M局通才PPO",
+        "固定对手评测",
+        "六类对位专家"
+      ],
+      "method": "先模仿，再大规模GPU自博弈，最后结合固定对手评测和专家回放复盘训练对位专家。显式记录合法选项、能量缺口、效果状态与历史。",
+      "training": "报告通才阶段约273M完整对局；单位与其他队伍的环境步 / 决策样本不同。最终部署策略由通才与六类对位专家组成。",
+      "tactics": "Dragapult伤害分配配合Risky Ruins / Munkidori；Crispin与Meowth保障供能，Dudunsparce持续抽牌，Moltres提供单奖赏火系反击。",
+      "limits": "公开牌表总计19 Pokémon、32 Trainers、9 Energy。全表为报告图像，未把本人的相似Dragapult牌组冒充其提交。",
+      "lesson": "可学习：GPU引擎提速与人类专家审查共同使用；报告未提供可核实团队代码发布仓库。",
+      "code": "",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 9,
+      "team": "Rmy",
+      "score": 1200.0,
+      "members": [
+        {
+          "text": "yo's profile",
+          "url": "https://www.kaggle.com/mekory"
+        }
+      ],
+      "strategy_rank": null,
+      "title": "Ogerpon–Hydrapple with Engine Lookahead and Large-Rollout PPO",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/new-writeup-1788435877208",
+      "model": "7.8M Transformer / bounded probe PPO",
+      "deck": "Teal Mask Ogerpon ex / Hydrapple ex",
+      "core_ids": [
+        "96",
+        "150"
+      ],
+      "flow": [
+        "回放 BC",
+        "value fine-tune",
+        "大批量 PPO",
+        "NumPy部署 + 引擎特征"
+      ],
+      "method": "64状态token、五层Transformer；每个候选交叉注意力读取状态，受限引擎探测生成28个后果特征。最多探测64候选，不等于在线MCTS。",
+      "training": "BC → value训练 → PPO。oracle critic的对手手牌仅供训练，部署policy不接收。公开仓库提供代码、最终权重与中英报告。",
+      "tactics": "Ogerpon抽牌附能量，Hydrapple加速并将全场草能量转成伤害，Meganium倍增基础草能量；后备位、进化线与能量去向需共同安排。",
+      "limits": "两份最终提交同一牌表与模型。报告明确无在线MCTS；本地训练胜率与实战统计分开。精确60张名称数量表已整理。",
+      "lesson": "可学习：用受限引擎探测降低学习机制成本，再训练资源排序；代码依赖原比赛运行时。",
+      "code": "https://github.com/YoInaOwO/pokemon-tcg-ai-battle-9th",
+      "writeup_license": "MIT"
+    },
+    {
+      "rank": 10,
+      "team": "Azat Akhtyamov",
+      "score": 1195.3,
+      "members": [
+        {
+          "text": "Azat Akhtyamov's profile",
+          "url": "https://www.kaggle.com/azakhtyamov"
+        }
+      ],
+      "strategy_rank": null,
+      "title": "[10th Place] From Imitation to RL with Dragapult",
+      "source": "https://www.kaggle.com/competitions/pokemon-tcg-ai-battle-challenge-strategy/writeups/new-writeup-1787057147099",
+      "model": "身份条件模仿 → 多阶段 PPO",
+      "deck": "Dragapult ex",
+      "core_ids": [
+        "121",
+        "120"
+      ],
+      "flow": [
+        "448提交身份模仿",
+        "锦标赛过滤回放",
+        "313→176牌池PPO",
+        "固定Dragapult聚焦"
+      ],
+      "method": "同一网络学习不同团队 / 提交风格，identity token在RL阶段关闭。卡牌、动作和效果嵌入从文本初始化，多选自回归。",
+      "training": "最终模仿集约9.9M决策，来自67队448份提交；四阶段PPO使用8×RTX5090，终局奖励与牌组突变扩大经验。",
+      "tactics": "用模仿代理锦标赛过滤数据，再用同策略牌组锦标赛缩小牌池。最后固定一方Dragapult，另一方从剩余牌池采样。",
+      "limits": "作者最后固定评测中Dragapult为51/64胜，明确只是小样本开发池指标；不能写成79.7%公开榜胜率。",
+      "lesson": "可学习：把回放来源身份当条件，筛选行为数据后再RL；报告未附可核实团队代码仓库。",
+      "code": "",
+      "writeup_license": "MIT"
+    }
+  ],
+  "champion_decks": [
+    {
+      "key": "917977",
+      "title": "Dragapult ex",
+      "sha1": "917977559267ec03102e990e471c91e99853763b",
+      "status": "最终提交",
+      "cards": [
+        {
+          "name": "Budew",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Dragapult ex",
+          "count": 3,
+          "group": "H"
+        },
+        {
+          "name": "Drakloak",
+          "count": 4,
+          "group": "H"
+        },
+        {
+          "name": "Dreepy",
+          "count": 4,
+          "group": "H"
+        },
+        {
+          "name": "Fezandipiti ex",
+          "count": 1,
+          "group": "H"
+        },
+        {
+          "name": "Meowth ex",
+          "count": 1,
+          "group": "H"
+        },
+        {
+          "name": "Munkidori",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Buddy-Buddy Poffin",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Crushing Hammer",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Night Stretcher",
+          "count": 2,
+          "group": "I"
+        },
+        {
+          "name": "Poké Pad",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Ultra Ball",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Unfair Stamp",
+          "count": 1,
+          "group": "I"
+        },
+        {
+          "name": "Boss’s Orders",
+          "count": 3,
+          "group": "K"
+        },
+        {
+          "name": "Crispin",
+          "count": 3,
+          "group": "K"
+        },
+        {
+          "name": "Judge",
+          "count": 2,
+          "group": "K"
+        },
+        {
+          "name": "Lillie's Determination",
+          "count": 4,
+          "group": "K"
+        },
+        {
+          "name": "Team Rocket's Watchtower",
+          "count": 2,
+          "group": "L"
+        },
+        {
+          "name": "Basic {D} Energy",
+          "count": 2,
+          "group": "M"
+        },
+        {
+          "name": "Basic {P} Energy",
+          "count": 4,
+          "group": "M"
+        },
+        {
+          "name": "Basic {R} Energy",
+          "count": 4,
+          "group": "M"
+        }
+      ],
+      "source": "https://github.com/yijieyuan/kaggle-pokemon-tcg/blob/main/strategy-track/supplements/decks.xlsx"
+    },
+    {
+      "key": "f38fb5",
+      "title": "Dragapult ex",
+      "sha1": "f38fb5448a0f99b6bc062e727f39cea4157c954d",
+      "status": "最终提交",
+      "cards": [
+        {
+          "name": "Budew",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Chi-Yu",
+          "count": 1,
+          "group": "H"
+        },
+        {
+          "name": "Dragapult ex",
+          "count": 3,
+          "group": "H"
+        },
+        {
+          "name": "Drakloak",
+          "count": 4,
+          "group": "H"
+        },
+        {
+          "name": "Dreepy",
+          "count": 4,
+          "group": "H"
+        },
+        {
+          "name": "Fezandipiti ex",
+          "count": 1,
+          "group": "H"
+        },
+        {
+          "name": "Meowth ex",
+          "count": 1,
+          "group": "H"
+        },
+        {
+          "name": "Munkidori",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Buddy-Buddy Poffin",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Crushing Hammer",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Night Stretcher",
+          "count": 2,
+          "group": "I"
+        },
+        {
+          "name": "Poké Pad",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Ultra Ball",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Unfair Stamp",
+          "count": 1,
+          "group": "I"
+        },
+        {
+          "name": "Boss’s Orders",
+          "count": 3,
+          "group": "K"
+        },
+        {
+          "name": "Crispin",
+          "count": 3,
+          "group": "K"
+        },
+        {
+          "name": "Judge",
+          "count": 1,
+          "group": "K"
+        },
+        {
+          "name": "Lillie's Determination",
+          "count": 4,
+          "group": "K"
+        },
+        {
+          "name": "Jamming Tower",
+          "count": 2,
+          "group": "L"
+        },
+        {
+          "name": "Basic {D} Energy",
+          "count": 2,
+          "group": "M"
+        },
+        {
+          "name": "Basic {P} Energy",
+          "count": 4,
+          "group": "M"
+        },
+        {
+          "name": "Basic {R} Energy",
+          "count": 4,
+          "group": "M"
+        }
+      ],
+      "source": "https://github.com/yijieyuan/kaggle-pokemon-tcg/blob/main/strategy-track/supplements/decks.xlsx"
+    },
+    {
+      "key": "f04db8",
+      "title": "Hydrapple ex",
+      "sha1": "f04db8a22692a5c960874a086bb3feb6dc21b2c2",
+      "status": "最终候选，未入最后两份提交",
+      "cards": [
+        {
+          "name": "Applin",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Bayleef",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Chikorita",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Dipplin",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Fezandipiti ex",
+          "count": 1,
+          "group": "H"
+        },
+        {
+          "name": "Hydrapple ex",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Meganium",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Meowth ex",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Tapu Bulu",
+          "count": 2,
+          "group": "H"
+        },
+        {
+          "name": "Teal Mask Ogerpon ex",
+          "count": 4,
+          "group": "H"
+        },
+        {
+          "name": "Bug Catching Set",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Night Stretcher",
+          "count": 2,
+          "group": "I"
+        },
+        {
+          "name": "Poké Pad",
+          "count": 2,
+          "group": "I"
+        },
+        {
+          "name": "Ultra Ball",
+          "count": 4,
+          "group": "I"
+        },
+        {
+          "name": "Unfair Stamp",
+          "count": 1,
+          "group": "I"
+        },
+        {
+          "name": "Boss’s Orders",
+          "count": 2,
+          "group": "K"
+        },
+        {
+          "name": "Dawn",
+          "count": 1,
+          "group": "K"
+        },
+        {
+          "name": "Lana’s Aid",
+          "count": 1,
+          "group": "K"
+        },
+        {
+          "name": "Lillie's Determination",
+          "count": 4,
+          "group": "K"
+        },
+        {
+          "name": "Xerosic’s Machinations",
+          "count": 1,
+          "group": "K"
+        },
+        {
+          "name": "Forest of Vitality",
+          "count": 4,
+          "group": "L"
+        },
+        {
+          "name": "Basic {G} Energy",
+          "count": 13,
+          "group": "M"
+        }
+      ],
+      "source": "https://github.com/yijieyuan/kaggle-pokemon-tcg/blob/main/strategy-track/supplements/decks.xlsx"
+    }
+  ]
+}

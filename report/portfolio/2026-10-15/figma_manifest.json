@@ -49,6 +49,18 @@
       "id": "11:2",
       "name": "08 真实卡牌资产 · 241 张",
       "frames": 5
+    },
+    {
+      "id": "26:2",
+      "name": "09 冠军与双榜 · 2026-10-15"
+    },
+    {
+      "id": "26:3",
+      "name": "10 Top10 方案 · 逐队图文"
+    },
+    {
+      "id": "26:4",
+      "name": "11 冠军卡组 · 精确60张"
     }
   ],
   "decks": [
@@ -736,5 +748,12 @@
     "primary": "#CCFA00",
     "blue": "#1039D5",
     "cyan": "#42F7FB"
+  },
+  "top10": {
+    "url": "https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=27-2",
+    "teams": 10,
+    "champion_decks": 3,
+    "source_readers": 10,
+    "source_figures": 83
   }
 }
