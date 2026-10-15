@@ -1,3 +1,14 @@
+## 2026-10-15 — Figma portfolio sync complete
+
+- State: user selected 設計比賽規劃; created the requested PTCG review file and synchronized the same deck snapshot.
+- Verified: 8 pages, 111 deck frames, 6,660 editable slots; every card name and order matched decks.json; no text overflow. Cover, timeline, Agent and deck screenshots inspected.
+- Changed: README.md, STATE.md, portfolio README/SYNC, SVG import note and figma_manifest.json. Existing Agent code unchanged.
+- Blockers: none for this archive/portfolio request.
+- Next action: user can review the linked file; no training or competition submission is scheduled or restarted.
+- Figma: https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=2-2
+
+---
+
 ## 2026-10-15 — Archive verification and evidence-based portfolio sync
 
 - State: B02 local duplicate migrated to external archive after 6,829 regular files (25,384,716,393 bytes) matched SHA-256; original path retained as local symlink. Regenerable caches/environment excluded. This is storage verification, not a game performance measurement.

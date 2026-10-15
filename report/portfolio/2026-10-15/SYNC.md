@@ -1,12 +1,14 @@
 # 2026-10-15 归档与同步说明
 
-本轮整理三类成果：外盘证据存档、GitHub可公开展示包、Figma过程复盘。本文档生成时，外盘迁移与卡组页面浏览器验证已完成，此展示包随本次 GitHub 提交发布；具体版本由所在 commit 标识，提交结果另保存在本机发布凭据。Figma素材见[figma-svg/](figma-svg/)，实际写入仍待确定目标文件，不在这里宣称完成。
+外盘迁移、GitHub 公开展示包与 Figma 云端写入已完成。
+
+[Figma：PTCG 比赛复盘与卡牌战术](https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=2-2) 位于「設計比賽規劃」团队。8 页包括总览、时间线、Agent/战术和全部卡组；111 组各 60 张，合计 6,660 个可编辑卡槽，逐张名称与顺序核对通过。页面元数据见 [figma_manifest.json](figma_manifest.json)。
 
 | 位置 | 保存什么 | 完成依据 |
 |---|---|---|
 | 外盘 | 源目录、受限大数据/原生引擎/原提交包、manifest与hash、未公开模型 | 文件数量/大小/hash验证与迁移报告 |
 | GitHub现有仓库 | 本人可再分发代码、脱敏聚合、卡组展示、历史复盘和来源 | 实际推送commit与在线读取；禁止用本地文件存在代替上传成功 |
-| Figma | 时间线、Agent架构、角色协作、部署修复、负结果与证据卡 | 创建文件并检查页面后才标完成 |
+| Figma | 时间线、Agent架构、角色协作、部署修复、负结果与证据卡 | 已创建并检查 8 页，逐张名称、顺序、数量均一致 |
 
 公开展示入口为[index.html](index.html)，结构化数据为[decks.json](decks.json)，过程为[HISTORY](HISTORY.md)。此次文档整理不重跑比赛、训练、自动提交或旧never-stop循环；既有仓库历史也不由新的Mac导入覆盖。
 

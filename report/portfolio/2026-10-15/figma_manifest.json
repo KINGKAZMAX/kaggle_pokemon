@@ -1,0 +1,726 @@
+{
+  "fileKey": "UpPXmCgS3JXRhhwksWq8xq",
+  "url": "https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=2-2",
+  "team": "設計比賽規劃",
+  "title": "PTCG 比赛复盘与卡牌战术",
+  "snapshot": "2026-10-15",
+  "pages": [
+    {
+      "id": "0:1",
+      "name": "00 总览与导航",
+      "frames": 1
+    },
+    {
+      "id": "3:2",
+      "name": "01 项目时间线",
+      "frames": 1
+    },
+    {
+      "id": "4:2",
+      "name": "02 Agent 与战术",
+      "frames": 1
+    },
+    {
+      "id": "2:20",
+      "name": "03 卡组 · GitHub 001–030",
+      "frames": 30
+    },
+    {
+      "id": "4:43",
+      "name": "04 卡组 · GitHub 031–060",
+      "frames": 30
+    },
+    {
+      "id": "4:7454",
+      "name": "05 卡组 · GitHub 061–090",
+      "frames": 30
+    },
+    {
+      "id": "5:2",
+      "name": "06 卡组 · GitHub 091–103",
+      "frames": 13
+    },
+    {
+      "id": "5:3214",
+      "name": "07 卡组 · Mac 支线",
+      "frames": 8
+    }
+  ],
+  "decks": [
+    {
+      "id": "远端-R001",
+      "nodeId": "2:21",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R002",
+      "nodeId": "2:268",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R003",
+      "nodeId": "2:515",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R004",
+      "nodeId": "2:762",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R005",
+      "nodeId": "2:1009",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R006",
+      "nodeId": "2:1256",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R007",
+      "nodeId": "3:30",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R008",
+      "nodeId": "3:277",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R009",
+      "nodeId": "3:524",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R010",
+      "nodeId": "3:771",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R011",
+      "nodeId": "3:1018",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R012",
+      "nodeId": "3:1265",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R013",
+      "nodeId": "3:1512",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R014",
+      "nodeId": "3:1759",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R015",
+      "nodeId": "3:2006",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R016",
+      "nodeId": "3:2253",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R017",
+      "nodeId": "3:2500",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R018",
+      "nodeId": "3:2747",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R019",
+      "nodeId": "3:2994",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R020",
+      "nodeId": "3:3241",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R021",
+      "nodeId": "3:3488",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R022",
+      "nodeId": "3:3735",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R023",
+      "nodeId": "3:3982",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R024",
+      "nodeId": "3:4229",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R025",
+      "nodeId": "3:4476",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R026",
+      "nodeId": "3:4723",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R027",
+      "nodeId": "3:4970",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R028",
+      "nodeId": "3:5217",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R029",
+      "nodeId": "3:5464",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R030",
+      "nodeId": "3:5711",
+      "pageId": "2:20",
+      "slots": 60
+    },
+    {
+      "id": "远端-R031",
+      "nodeId": "4:44",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R032",
+      "nodeId": "4:291",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R033",
+      "nodeId": "4:538",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R034",
+      "nodeId": "4:785",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R035",
+      "nodeId": "4:1032",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R036",
+      "nodeId": "4:1279",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R037",
+      "nodeId": "4:1526",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R038",
+      "nodeId": "4:1773",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R039",
+      "nodeId": "4:2020",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R040",
+      "nodeId": "4:2267",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R041",
+      "nodeId": "4:2514",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R042",
+      "nodeId": "4:2761",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R043",
+      "nodeId": "4:3008",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R044",
+      "nodeId": "4:3255",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R045",
+      "nodeId": "4:3502",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R046",
+      "nodeId": "4:3749",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R047",
+      "nodeId": "4:3996",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R048",
+      "nodeId": "4:4243",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R049",
+      "nodeId": "4:4490",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R050",
+      "nodeId": "4:4737",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R051",
+      "nodeId": "4:4984",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R052",
+      "nodeId": "4:5231",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R053",
+      "nodeId": "4:5478",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R054",
+      "nodeId": "4:5725",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R055",
+      "nodeId": "4:5972",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R056",
+      "nodeId": "4:6219",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R057",
+      "nodeId": "4:6466",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R058",
+      "nodeId": "4:6713",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R059",
+      "nodeId": "4:6960",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R060",
+      "nodeId": "4:7207",
+      "pageId": "4:43",
+      "slots": 60
+    },
+    {
+      "id": "远端-R061",
+      "nodeId": "4:7455",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R062",
+      "nodeId": "4:7702",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R063",
+      "nodeId": "4:7949",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R064",
+      "nodeId": "4:8196",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R065",
+      "nodeId": "4:8443",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R066",
+      "nodeId": "4:8690",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R067",
+      "nodeId": "4:8937",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R068",
+      "nodeId": "4:9184",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R069",
+      "nodeId": "4:9431",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R070",
+      "nodeId": "4:9678",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R071",
+      "nodeId": "4:9925",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R072",
+      "nodeId": "4:10172",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R073",
+      "nodeId": "4:10419",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R074",
+      "nodeId": "4:10666",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R075",
+      "nodeId": "4:10913",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R076",
+      "nodeId": "4:11160",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R077",
+      "nodeId": "4:11407",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R078",
+      "nodeId": "4:11654",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R079",
+      "nodeId": "4:11901",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R080",
+      "nodeId": "4:12148",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R081",
+      "nodeId": "4:12395",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R082",
+      "nodeId": "4:12642",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R083",
+      "nodeId": "4:12889",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R084",
+      "nodeId": "4:13136",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R085",
+      "nodeId": "4:13383",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R086",
+      "nodeId": "4:13630",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R087",
+      "nodeId": "4:13877",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R088",
+      "nodeId": "4:14124",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R089",
+      "nodeId": "4:14371",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R090",
+      "nodeId": "4:14618",
+      "pageId": "4:7454",
+      "slots": 60
+    },
+    {
+      "id": "远端-R091",
+      "nodeId": "5:3",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R092",
+      "nodeId": "5:250",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R093",
+      "nodeId": "5:497",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R094",
+      "nodeId": "5:744",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R095",
+      "nodeId": "5:991",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R096",
+      "nodeId": "5:1238",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R097",
+      "nodeId": "5:1485",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R098",
+      "nodeId": "5:1732",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R099",
+      "nodeId": "5:1979",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R100",
+      "nodeId": "5:2226",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R101",
+      "nodeId": "5:2473",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R102",
+      "nodeId": "5:2720",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "远端-R103",
+      "nodeId": "5:2967",
+      "pageId": "5:2",
+      "slots": 60
+    },
+    {
+      "id": "本机-D01",
+      "nodeId": "5:3215",
+      "pageId": "5:3214",
+      "slots": 60
+    },
+    {
+      "id": "本机-D02",
+      "nodeId": "5:3462",
+      "pageId": "5:3214",
+      "slots": 60
+    },
+    {
+      "id": "本机-D03",
+      "nodeId": "5:3709",
+      "pageId": "5:3214",
+      "slots": 60
+    },
+    {
+      "id": "本机-D04",
+      "nodeId": "5:3956",
+      "pageId": "5:3214",
+      "slots": 60
+    },
+    {
+      "id": "本机-D05",
+      "nodeId": "5:4203",
+      "pageId": "5:3214",
+      "slots": 60
+    },
+    {
+      "id": "本机-D06",
+      "nodeId": "5:4450",
+      "pageId": "5:3214",
+      "slots": 60
+    },
+    {
+      "id": "本机-D07",
+      "nodeId": "5:4697",
+      "pageId": "5:3214",
+      "slots": 60
+    },
+    {
+      "id": "本机-D08",
+      "nodeId": "5:4944",
+      "pageId": "5:3214",
+      "slots": 60
+    }
+  ],
+  "verification": {
+    "deckCount": 111,
+    "slots": 6660,
+    "errors": [],
+    "overflow": []
+  },
+  "overviewFrame": "2:2",
+  "timelineFrame": "3:3",
+  "agentFrame": "4:3"
+}

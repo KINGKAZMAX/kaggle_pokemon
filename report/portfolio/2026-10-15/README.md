@@ -2,7 +2,7 @@
 
 这是 KINGKAZMAX 的 Pokémon TCG AI Battle 项目回顾与卡组浏览入口，整理我做过的规则策略、搜索、训练尝试、部署修复、评测和失败决策。页面中的牌组、历史分数和原始出处分开标注；历史读数不代表当前排名，也不代表获奖。
 
-[打开卡牌与组合战术](index.html) · [查看结构化卡组](decks.json) · [Figma用SVG素材](figma-svg/) · [开发过程与结果](HISTORY.md) · [归档与同步说明](SYNC.md)
+[Figma：比赛复盘与卡牌战术](https://www.figma.com/design/UpPXmCgS3JXRhhwksWq8xq?node-id=2-2) · [打开卡牌与组合战术](index.html) · [查看结构化卡组](decks.json) · [Figma用SVG素材](figma-svg/) · [开发过程与结果](HISTORY.md) · [归档与同步说明](SYNC.md)
 
 ## 我做过什么
 
